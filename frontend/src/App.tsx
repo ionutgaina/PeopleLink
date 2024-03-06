@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import axios from 'axios'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -9,15 +10,15 @@ function App() {
 
 //  using axios to fetch data from an API
 
+const fetchData = async () => {
+  const response = await axios.get('http://localhost:8080/hello')
+  console.log(response.data)
+}
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('localhost:8080');
-      const data = await response.json()
-      console.log(data)
-    }
-    fetchData()
+    fetchData();
   }, [])
+
   return (
     <>
       <div>
