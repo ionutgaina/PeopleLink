@@ -23,4 +23,6 @@ public class Contact {
     @Id
     @Column(name = "receiver_id", nullable = false)
     private Long receiverId;
+
+
 }
