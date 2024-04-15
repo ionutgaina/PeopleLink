@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "blacklist")
+@Table(name = "blacklists")
 public class Blacklist {
     @Id
     @Column(name = "sender_id", nullable = false)

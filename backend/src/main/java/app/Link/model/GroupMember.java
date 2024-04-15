@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "group_member")
+@Table(name = "group_members")
 public class GroupMember {
     @Id
     @Column(name = "group_id", nullable = false)

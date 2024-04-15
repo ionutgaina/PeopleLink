@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "group_message")
+@Table(name = "group_messages")
 public class GroupMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "contact")
+@Table(name = "contacts")
 public class Contact {
     @Id
     @Column(name = "sender_id", nullable = false)
