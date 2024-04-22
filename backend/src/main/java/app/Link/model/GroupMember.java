@@ -31,4 +31,7 @@ public class GroupMember {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private MemberRole role = MemberRole.MEMBER;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<GroupMessage> messages;
 }
