@@ -1,13 +1,13 @@
 package app.Link.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import app.Link.common.ContactStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @Builder
@@ -17,12 +17,21 @@ import lombok.NoArgsConstructor;
 @Table(name = "contacts")
 public class Contact {
     @Id
-    @Column(name = "sender_id", nullable = false)
-    private Long senderId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Id
-    @Column(name = "receiver_id", nullable = false)
-    private Long receiverId;
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
 
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private User receiver;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ContactStatus status = ContactStatus.PENDING;
+
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL)
+    private Set<Message> messages;
 }

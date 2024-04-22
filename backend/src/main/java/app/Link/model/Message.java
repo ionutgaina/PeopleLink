@@ -17,11 +17,9 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sender_id", nullable = false)
-    private Long senderId;
-
-    @Column(name = "receiver_id", nullable = false)
-    private Long receiverId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Lob
     @Column(name = "text", nullable = false)
@@ -30,5 +28,7 @@ public class Message {
     @Column(name = "media_link")
     private String mediaLink;
 
-
+    @ManyToOne
+    @JoinColumn(name = "contact_id", nullable = false)
+    private Contact contact;
 }
