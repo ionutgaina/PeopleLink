@@ -1,9 +1,6 @@
 package app.Link.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,12 +14,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "contacts")
 public class Contact {
     @Id
-    @Column(name = "sender_id", nullable = false)
-    private Long senderId;
+    @Column(name = "contact", nullable = false)
+    private Long id;
 
-    @Id
-    @Column(name = "receiver_id", nullable = false)
-    private Long receiverId;
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
 
-
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private User receiver;
 }
