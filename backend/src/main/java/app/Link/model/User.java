@@ -36,4 +36,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupMember> groups;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Blacklist> blackListsSender;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Blacklist> blacklistsReceiver;
 }
