@@ -24,6 +24,7 @@ const Sidebar = ({ onNewRoom, rooms, history, onRoomClick }: SidebarProps) => {
 
 			<div className="sidebar__rooms">
 				<Scrollbar className="sidebar__scrollbar">
+					<p className='sidebar_text'>Rooms</p>
 					{rooms.map((room: RoomPopulated, i: number) => (
 						<SidebarRoom key={i} room={room} userDetails={userDetails} onRoomClick={onRoomClick} />
 					))}

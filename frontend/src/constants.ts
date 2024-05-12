@@ -53,7 +53,7 @@ export const roomData = [
 		users: [
 			{
 				user: usersData[0],
-				unread: 2
+				unread: 0
 			}
 		],
 		createdAt: '2021-02-01T12:00:00.000Z'

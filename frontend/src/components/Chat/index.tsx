@@ -21,7 +21,6 @@ export interface ChatProps {
 
 const Chat = ({ roomCode }: ChatProps) => {
   const [messages, setMessages] = useState([] as MessagePopulated[]);
-  // const chatSocket = useChat();
   const { userDetails } = useUser();
   const setRef = useCallback((node) => {
     if (node) {
@@ -30,7 +29,7 @@ const Chat = ({ roomCode }: ChatProps) => {
   }, []);
 
   useEffect(() => {
-    setMessages(messageData);
+    setMessages(messageData.filter((msg) => msg.roomCode === roomCode));
   }, [roomCode]);
 
   const formatDate = (date: Date) => {
