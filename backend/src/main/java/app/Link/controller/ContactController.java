@@ -1,13 +1,15 @@
-package app.Link.Service;
+package app.Link.controller;
 
 import app.Link.model.User;
+import app.Link.services.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
+public class ContactController {
+    private final ContactService userService;
+
 
     public void addContact(User user, User contact) {
         userService.addContact(user, contact);

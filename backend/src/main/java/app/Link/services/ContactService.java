@@ -1,6 +1,5 @@
-package app.Link.Service;
+package app.Link.services;
 
-import app.Link.model.Contact;
 import app.Link.model.User;
 import app.Link.repository.BlacklistRepository;
 import app.Link.repository.ContactRepository;
@@ -10,17 +9,13 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class UserService {
+public class ContactService {
     private final UserRepository userRepository;
     private final BlacklistRepository blacklistRepository;
     private final ContactRepository contactRepository;
 
-    public Contact findContactById(Long id) {
-        return contactRepository.findById(id).orElse(null);
-    }
-
     public void addContact(User user, User contact) {
-        Contact newContact = Contact.builder()
+        app.Link.model.Contact newContact = app.Link.model.Contact.builder()
                 .id(contact.getId())
                 .sender(user)
                 .receiver(contact)
@@ -32,9 +27,9 @@ public class UserService {
     }
 
     public void removeContact(User user, User contact) throws NullPointerException {
-        Contact contactToRemove = this.findContactById(contact.getId());
+        app.Link.model.Contact contactToRemove = this.contactRepository.findById(contact.getId()).orElse(null);
         if (contactToRemove == null) {
-            throw new NullPointerException("Contact not found while deleting.");
+                throw new NullPointerException("Contact not found while deleting.");
         }
         contactRepository.delete(contactToRemove);
 
