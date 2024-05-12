@@ -28,6 +28,13 @@ export interface RoomPopulated {
 	createdAt: string;
 }
 
+export interface ContactPopulated {
+	username: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+}
+
 export interface UserRoom {
 	name: string;
 	room: string;

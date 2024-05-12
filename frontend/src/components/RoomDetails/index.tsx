@@ -53,13 +53,12 @@ function RoomDetails({ roomDetails, onRoomLeave }: RoomDetailsProps) {
         }
       }
     } catch (e) {
-      console.log(e.response.data);
+      console.error(e);
     }
   };
 
   const generateOptions = () => {
     const ROOM_OPTIONS = [
-      { label: "Change Group Photo", icon: <PhotoIcon />, adminOnly: false },
       {
         label: "Leave Group",
         icon: <MeetingRoomIcon />,

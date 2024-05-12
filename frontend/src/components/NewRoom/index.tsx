@@ -15,7 +15,7 @@ export interface NewRoomProps {
 }
 
 function NewRoom({ open, onClose }: NewRoomProps) {
-  const [isNew, setisNew] = useState(true);
+  const [isNew, setisNew] = useState(1);
 
   const handleClose = (val: null | RoomPopulated) => {
     onClose(val);
@@ -40,27 +40,35 @@ function NewRoom({ open, onClose }: NewRoomProps) {
         <form>
           <ButtonGroup className="newRoom__type" color="primary">
             <Button
-              onClick={() => setisNew(true)}
+              onClick={() => setisNew(1)}
               className={`newRoom__button ${
-                isNew && "newRoom__button--selected"
+                isNew === 1 && "newRoom__button--selected"
               }`}
             >
               Create Room
             </Button>
             <Button
-              onClick={() => setisNew(false)}
+              onClick={() => setisNew(0)}
               className={`newRoom__button ${
-                !isNew && "newRoom__button--selected"
+                isNew === 0 && "newRoom__button--selected"
               }`}
             >
               Join Room
             </Button>
+            <Button
+              onClick={() => setisNew(-1)}
+              className={`newRoom__button ${
+                isNew === -1 && "newRoom__button--selected"
+              }`}
+            >
+              Add Contact
+            </Button>
           </ButtonGroup>
 
-          {isNew ? (
+          {isNew === 1 ? (
             <textarea rows={3} placeholder="Room Description" />
           ) : (
-            <input type="text" placeholder="Room Code" />
+            <input type="text" placeholder="Name" />
           )}
 
           <Button
