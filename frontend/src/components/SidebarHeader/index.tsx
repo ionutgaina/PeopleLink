@@ -4,9 +4,7 @@ import ChatIcon from '@material-ui/icons/Chat';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PersonIcon from '@material-ui/icons/Person';
 import { USER_INITIAL_VALUE } from '../../constants';
-import { useChat } from '../../context/ChatContext';
 import { useUser } from '../../context/UserContext';
-import chatHttp from '../../services/Http';
 import './style.css';
 import { useHistory } from 'react-router-dom';
 

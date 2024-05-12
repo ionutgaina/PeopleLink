@@ -1,10 +1,8 @@
 import React, { useState, useRef } from "react";
 import { DebounceInput } from "react-debounce-input";
 import { Button } from "@material-ui/core";
-import chatHttp from "../../services/Http";
 import "./style.css";
 import { useHistory } from "react-router-dom";
-import { set } from "date-fns";
 
 export interface SignUpProps {
   history: ReturnType<typeof useHistory>;

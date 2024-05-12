@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@material-ui/core';
-import chatHttp from '../../services/Http';
 import './style.css';
 import { useUser } from '../../context/UserContext';
 import { useHistory } from 'react-router-dom';
