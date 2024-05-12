@@ -17,19 +17,7 @@ function Login({ history }: LoginProps) {
 	const proceed = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
 		if (usernameRef.current && usernameRef.current.value && passwordRef.current && passwordRef.current.value) {
-			chatHttp
-				.login({ username: usernameRef.current.value, password: passwordRef.current.value })
-				.then(({ authorization, data }) => {
-					setErrorMsg('');
-					localStorage.setItem('chat-app-auth', authorization);
-					localStorage.setItem('chat-app-user', JSON.stringify(data.userDetails));
-					setUserDetails(data.userDetails);
-					history.push('/room');
-				})
-				.catch(({ response }) => {
-					console.log(response.data);
-					setErrorMsg(response.data.message);
-				});
+			history.push('/room');
 		} else {
 			setErrorMsg('Fill-in both username and password');
 		}
@@ -43,22 +31,10 @@ function Login({ history }: LoginProps) {
 		if (usernameRef.current) usernameRef.current.focus();
 	}, []);
 
-	useEffect(
-		() => {
-			const token = localStorage.getItem('chat-app-auth');
-			if (token && userDetails.username) {
-				chatHttp.changeLoginStatus({ newValue: true });
-				history.push('/room');
-			}
-		},
-		[ history, userDetails ]
-	);
-
 	return (
 		<div className="login auth__wrapper">
 			<div className="login__area area__wrapper">
-				<h1>REALTIME CHAT</h1>
-				<p className="header__text">by Rose Bilag</p>
+				<h1>PLink</h1>
 				<form>
 					<input ref={usernameRef} type="text" placeholder="Username or Email" required />
 					<input ref={passwordRef} type="password" placeholder="Password" required />

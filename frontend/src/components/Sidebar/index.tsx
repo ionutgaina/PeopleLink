@@ -16,6 +16,8 @@ export interface SidebarProps {
 
 const Sidebar = ({ onNewRoom, rooms, history, onRoomClick }: SidebarProps) => {
 	const { userDetails } = useUser();
+
+	console.log('rooms', rooms);
 	return (
 		<div className="sidebar">
 			<SidebarHeader onNewRoom={onNewRoom} history={history} />

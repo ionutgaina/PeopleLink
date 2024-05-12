@@ -14,6 +14,9 @@ const SidebarRoom = ({ room, userDetails, onRoomClick }: SidebarRoomProps) => {
 	const userIndex = room.users.findIndex(
 		(roomUser: RoomUserPopulated) => roomUser.user.username === userDetails.username
 	);
+	console.log('userDetails', userDetails);
+	console.log('room', room);
+	console.log('userIndex', userIndex);
 	return (
 		<div className="sidebarRoom" onClick={() => onRoomClick(room.code)}>
 			<Avatar>

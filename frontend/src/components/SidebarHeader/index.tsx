@@ -18,22 +18,12 @@ export interface SidebarHeaderProps {
 function SidebarHeader({ history, onNewRoom }: SidebarHeaderProps) {
 	const [ anchorEl, setAnchorEl ] = React.useState<null | HTMLElement>(null);
 	const { userDetails, setUserDetails } = useUser();
-	const chatSocket = useChat();
 
 	const onLogout = () => {
 		setAnchorEl(null);
-		console.log('Disconnecting Socket Context..');
-		chatSocket.disconnect();
-		chatHttp
-			.changeLoginStatus({ newValue: false })
-			.then((resp) => {
-				localStorage.clear();
-				setUserDetails(USER_INITIAL_VALUE);
-				history.push('/login');
-			})
-			.catch(({ response }) => {
-				console.log(response);
-			});
+		localStorage.clear();
+		setUserDetails(USER_INITIAL_VALUE);
+		history.push('/login');
 	};
 	return (
 		<div className="sidebar__header">

@@ -52,7 +52,7 @@ export const roomData = [
 		description: 'Room 1',
 		users: [
 			{
-				user: usersData[1],
+				user: usersData[0],
 				unread: 2
 			}
 		],
@@ -63,7 +63,7 @@ export const roomData = [
 		description: 'Room 2',
 		users: [
 			{
-				user: usersData[1],
+				user: usersData[0],
 				unread: 0
 			}
 		],
