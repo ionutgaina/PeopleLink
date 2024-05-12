@@ -22,15 +22,6 @@ function ChatHeader({ roomCode, messages, formatDate }: ChatHeaderProps) {
 					)}
 				</p>
 			</div>
-			<div className="chat__headerIcons">
-				{/* TODO future implementation */}
-				{/* <IconButton>
-						<SearchIcon />
-					</IconButton>
-					<IconButton>
-						<MoreVertIcon />
-					</IconButton> */}
-			</div>
 		</div>
 	);
 }
