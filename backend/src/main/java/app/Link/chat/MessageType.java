@@ -1,2 +1,7 @@
-package app.Link.chat;public enum MessageType {
+package app.Link.chat;
+
+public enum MessageType {
+    CHAT,
+    JOIN,
+    LEAVE
 }
