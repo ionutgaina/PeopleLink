@@ -6,10 +6,7 @@ import {
   DialogTitle,
   DialogContent,
 } from "@material-ui/core";
-import chatHttp from "../../services/Http";
 import "./style.css";
-import { useChat } from "../../context/ChatContext";
-import { useUser } from "../../context/UserContext";
 import { RoomPopulated } from "../../types";
 
 export interface NewRoomProps {
@@ -19,10 +16,6 @@ export interface NewRoomProps {
 
 function NewRoom({ open, onClose }: NewRoomProps) {
   const [isNew, setisNew] = useState(true);
-  const [description, setDescription] = useState("");
-  const [roomCode, setRoomCode] = useState("");
-  const chatSocket = useChat();
-  const { userDetails } = useUser();
 
   const handleClose = (val: null | RoomPopulated) => {
     onClose(val);

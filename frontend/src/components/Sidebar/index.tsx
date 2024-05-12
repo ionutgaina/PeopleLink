@@ -20,14 +20,6 @@ const Sidebar = ({ onNewRoom, rooms, history, onRoomClick }: SidebarProps) => {
 		<div className="sidebar">
 			<SidebarHeader onNewRoom={onNewRoom} history={history} />
 
-			{/* TODO future implementation */}
-			{/* <div className="sidebar__search">
-				<div className="sidebar__searchContainer">
-					<SearchIcon />
-					<input type="text" placeholder="Search or start new chat" />
-				</div>
-			</div> */}
-
 			<div className="sidebar__rooms">
 				<Scrollbar className="sidebar__scrollbar">
 					{rooms.map((room: RoomPopulated, i: number) => (
