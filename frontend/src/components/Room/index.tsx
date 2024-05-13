@@ -6,8 +6,10 @@ import NewRoom from "../NewRoom";
 import RoomDetails from "../RoomDetails";
 import GeneralSnackbar from "../GeneralSnackbar";
 import { useHistory } from "react-router-dom";
-import { RoomPopulated } from "../../types";
-import { roomData } from "../../constants";
+import { ContactPopulated, RoomPopulated } from "../../types";
+import { roomData, usersData } from "../../constants";
+import ContactDetails from "../ContactDetails";
+import { useUser } from "../../context/UserContext";
 
 export interface RoomProps {
   history: ReturnType<typeof useHistory>;
@@ -18,16 +20,24 @@ const Room = ({ history }: RoomProps) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const snackbarMsg = useRef("");
   const [rooms, setRooms] = useState([] as RoomPopulated[]);
+  const [users, setUsers] = useState([] as ContactPopulated[]);
   const [roomCode, setRoomCode] = useState('');
+  const currentUser = useUser();
 
   useEffect(() => {
 	setRooms(roomData);
+  setUsers(usersData);
   }, []);
 
-  useEffect(() => {}, []);
   const getCurrentRoom = () => {
     return rooms.find((room: RoomPopulated) => room.code === roomCode);
   };
+
+  const getCurrentContact = () => {
+    return users.find((user) => user.username === roomCode);
+  }
+
+
 
   const handleRoomClick = (code: string) => {
     setRoomCode(code);
@@ -35,6 +45,11 @@ const Room = ({ history }: RoomProps) => {
       const newRooms = [...prevRooms];
       return newRooms;
     });
+    setUsers((prevUsers: ContactPopulated[]) => {
+      const newUsers = [...prevUsers];
+      return newUsers;
+    }
+    );
   };
 
   const handleRoomLeave = (code: string) => {
@@ -55,16 +70,27 @@ const Room = ({ history }: RoomProps) => {
       <Sidebar
         onNewRoom={() => setOpenModal(true)}
         rooms={rooms}
+        users={users.filter((user) => user.username !== currentUser.userDetails?.username)}
         history={history}
         onRoomClick={handleRoomClick}
       />
       {roomCode ? (
         <React.Fragment>
           <Chat roomCode={roomCode} />
-          <RoomDetails
-            roomDetails={getCurrentRoom()!}
-            onRoomLeave={handleRoomLeave}
-          />
+          {
+            users.find((user) => user.username === roomCode) ? (
+              <ContactDetails
+                contactDetails={getCurrentContact()!}
+                onUnfriend={() => {console.log('unfriend');}}
+                onBlock={() => {console.log('block');}}
+              />
+            ) : (
+              <RoomDetails
+                roomDetails={getCurrentRoom()!}
+                onRoomLeave={handleRoomLeave}
+              />
+            )
+          }
         </React.Fragment>
       ) : (
         <div className="chat chat--no-room">
