@@ -28,7 +28,6 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegister userRegister) {
-        System.out.println(userRegister.getUsername() + " " + userRegister.getPassword());
         User user = new User();
         user.setUsername(userRegister.getUsername());
         user.setPassword(userRegister.getPassword());
@@ -42,10 +41,10 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserRegister userRegister) {
-        User authenticatedUser = userService.authenticateUser(userRegister.getUsername(), userRegister.getPassword());
-        if (authenticatedUser != null) {
+        try {
+            User authenticatedUser = userService.authenticateUser(userRegister.getUsername(), userRegister.getPassword());
             return ResponseEntity.ok(authenticatedUser);
-        } else {
+        } catch (Exception e) {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
     }

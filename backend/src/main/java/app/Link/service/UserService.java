@@ -14,16 +14,19 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
-    public User registerUser(User user) {
+    public User registerUser(User user) throws Exception {
+        if (repository.findByUsername(user.getUsername()).isPresent()) {
+            throw new Exception("Username already exists");
+        }
         return repository.save(user);
     }
 
-    public User authenticateUser(String username, String password) {
+    public User authenticateUser(String username, String password) throws Exception {
         User user = repository.findByUsername(username).orElse(null);
         if (user != null && user.getPassword().equals(password)) {
             return user;
         }
-        return null;
+        throw new Exception("Invalid username or password");
     }
 
     public void saveUser(User user) {
