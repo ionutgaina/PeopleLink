@@ -9,4 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ContactService {
     private final ContactRepository contactRepository;
+
+    public void addContact() {
+    }
 }

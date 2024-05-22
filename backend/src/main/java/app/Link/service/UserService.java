@@ -1,10 +1,9 @@
 package app.Link.service;
 
+import app.Link.dto.user.UserRegisterDto;
 import app.Link.model.User;
 import app.Link.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +13,14 @@ import java.util.List;
 public class UserService {
     private UserRepository repository;
 
-    public User registerUser(User user) throws Exception {
-        if (repository.findByUsername(user.getUsername()).isPresent()) {
+    public void registerUser(UserRegisterDto userRegisterDto) throws Exception {
+        if (repository.findByUsername(userRegisterDto.getUsername()).isPresent()) {
             throw new Exception("Username already exists");
         }
-        return repository.save(user);
+        User user = new User();
+        user.setUsername(userRegisterDto.getUsername());
+        user.setPassword(userRegisterDto.getPassword());
+        repository.save(user);
     }
 
     public User authenticateUser(String username, String password) throws Exception {
