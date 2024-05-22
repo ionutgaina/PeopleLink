@@ -2,6 +2,7 @@ package app.Link.service;
 
 import app.Link.model.User;
 import app.Link.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,9 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserService {
-    @Autowired
     private UserRepository repository;
 
     public User registerUser(User user) throws Exception {

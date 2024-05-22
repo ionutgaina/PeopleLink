@@ -15,16 +15,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/user")
 @CrossOrigin
 public class UserController {
 
     private final UserService userService;
-
-    @GetMapping("/test")
-    public void testGet() {
-        System.out.println("Hello!");
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegister userRegister) {
@@ -32,8 +27,8 @@ public class UserController {
         user.setUsername(userRegister.getUsername());
         user.setPassword(userRegister.getPassword());
         try {
-            User registeredUser = userService.registerUser(user);
-            return ResponseEntity.ok(registeredUser);
+            userService.registerUser(user);
+            return ResponseEntity.ok().body("User created successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
@@ -45,7 +40,7 @@ public class UserController {
             User authenticatedUser = userService.authenticateUser(userRegister.getUsername(), userRegister.getPassword());
             return ResponseEntity.ok(authenticatedUser);
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Invalid username or password");
+            return ResponseEntity.status(401).body("Error: " + e.getMessage());
         }
     }
 
