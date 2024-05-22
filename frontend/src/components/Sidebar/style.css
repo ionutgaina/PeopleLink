@@ -1,0 +1,17 @@
+.sidebar {
+	flex-grow: 1;
+	background-color: #023047;
+	color: #fff;
+}
+
+.sidebar__scrollbar {
+	height: 100%;
+	width: 100%;
+}
+.sidebar__rooms {
+	height: calc(100vh - 3.67rem);
+}
+
+.sidebar_text {
+	padding-left: 1rem;
+}
