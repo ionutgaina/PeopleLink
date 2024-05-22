@@ -1,5 +1,6 @@
 package app.Link.controller;
 
+import app.Link.dto.user.UserRegister;
 import app.Link.model.User;
 import app.Link.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,16 +9,46 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
+@CrossOrigin
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping("/test")
+    public void testGet() {
+        System.out.println("Hello!");
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserRegister userRegister) {
+        System.out.println(userRegister.getUsername() + " " + userRegister.getPassword());
+        User user = new User();
+        user.setUsername(userRegister.getUsername());
+        user.setPassword(userRegister.getPassword());
+        try {
+            User registeredUser = userService.registerUser(user);
+            return ResponseEntity.ok(registeredUser);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody UserRegister userRegister) {
+        User authenticatedUser = userService.authenticateUser(userRegister.getUsername(), userRegister.getPassword());
+        if (authenticatedUser != null) {
+            return ResponseEntity.ok(authenticatedUser);
+        } else {
+            return ResponseEntity.status(401).body("Invalid username or password");
+        }
+    }
 
     @MessageMapping("/user.addUser")
 //    @SendTo("/user/public")

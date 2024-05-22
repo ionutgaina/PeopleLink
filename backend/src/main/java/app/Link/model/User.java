@@ -22,17 +22,8 @@ public class User {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
     @Column(name = "password", nullable = false)
     private String password;
-
-    @Column(name = "phone_number", nullable = false)
-    private String phoneNumber;
-
-    @Column(name = "description")
-    private String description;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupMember> groups;
