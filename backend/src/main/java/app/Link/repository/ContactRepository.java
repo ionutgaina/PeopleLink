@@ -10,11 +10,11 @@ import java.util.List;
 
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Long> {
-    List<Contact> findByReceiver(User receiver);
-
     Contact findBySenderAndReceiver(User sender, User receiver);
 
     List<Contact> findByReceiverAndStatus(User receiver, ContactStatus contactStatus);
 
     List<Contact> findBySenderAndStatus(User sender, ContactStatus contactStatus);
+
+    List<Contact> findBySenderOrReceiver(User sender, User receiver);
 }

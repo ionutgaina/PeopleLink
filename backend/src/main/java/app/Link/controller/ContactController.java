@@ -76,4 +76,14 @@ public class ContactController {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<?> getContacts(@RequestBody UserGetDto user) {
+        try {
+            List<ContactAddDto> contacts = contactService.getContacts(user);
+            return ResponseEntity.ok(contacts);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
 }

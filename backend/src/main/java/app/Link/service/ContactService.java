@@ -89,8 +89,7 @@ public class ContactService {
                                 contact.getSender().getUsername(),
                                 contact.getReceiver().getUsername()
                         )
-                )
-                .toList();
+                ).toList();
     }
 
     public void cancelRequest(ContactAddDto contactToCancel) throws Exception {
@@ -104,5 +103,22 @@ public class ContactService {
 
         Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver);
         contactRepository.delete(contact);
+    }
+
+    public List<ContactAddDto> getContacts(UserGetDto userDto) throws Exception {
+        User user = userRepository.findByUsername(userDto.getUsername()).orElseThrow(
+                () -> new Exception("User not found")
+        );
+
+        return contactRepository.findBySenderOrReceiver(user, user)
+                .stream()
+                .filter(
+                        contact -> contact.getStatus() == ContactStatus.ACCEPTED
+                ).map(
+                        contact -> new ContactAddDto(
+                                contact.getSender().getUsername(),
+                                contact.getReceiver().getUsername()
+                        )
+                ).toList();
     }
 }
