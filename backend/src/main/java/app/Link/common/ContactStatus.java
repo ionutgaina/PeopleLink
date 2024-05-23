@@ -4,4 +4,5 @@ public enum ContactStatus {
     PENDING,
     ACCEPTED,
     REJECTED,
+    BLOCKED,
 }

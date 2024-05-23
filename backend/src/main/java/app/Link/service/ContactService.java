@@ -27,6 +27,10 @@ public class ContactService {
                 () -> new Exception("Receiver not found")
         );
 
+        if (contactRepository.findBySenderAndReceiver(sender, receiver).isPresent()) {
+            throw new Exception("Friend request already sent");
+        }
+
         Contact contact = new Contact();
         contact.setSender(sender);
         contact.setReceiver(receiver);
@@ -42,7 +46,8 @@ public class ContactService {
                 () -> new Exception("Receiver not found")
         );
 
-        Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver);
+        Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver).orElseThrow(
+                () -> new Exception("Contact not found"));
         contact.setStatus(ContactStatus.ACCEPTED);
         contactRepository.save(contact);
     }
@@ -56,7 +61,8 @@ public class ContactService {
                 () -> new Exception("Receiver not found")
         );
 
-        Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver);
+        Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver).orElseThrow(
+                () -> new Exception("Contact not found"));
         contact.setStatus(ContactStatus.REJECTED);
         contactRepository.save(contact);
     }
@@ -101,7 +107,8 @@ public class ContactService {
                 () -> new Exception("Receiver not found")
         );
 
-        Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver);
+        Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver).orElseThrow(
+                () -> new Exception("Contact not found"));
         contactRepository.delete(contact);
     }
 
@@ -120,5 +127,50 @@ public class ContactService {
                                 contact.getReceiver().getUsername()
                         )
                 ).toList();
+    }
+
+    public void blockContact(ContactAddDto contactToBlock) throws Exception {
+        User sender = userRepository.findByUsername(contactToBlock.getSender()).orElseThrow(
+                () -> new Exception("Sender not found")
+        );
+
+        User receiver = userRepository.findByUsername(contactToBlock.getReceiver()).orElseThrow(
+                () -> new Exception("Receiver not found")
+        );
+
+        Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver).orElseThrow(
+                () -> new Exception("Contact not found")
+        );
+
+        if (contact.getStatus() == ContactStatus.BLOCKED) {
+            throw new Exception("Contact already blocked");
+        }
+
+        if (contact.getStatus() != ContactStatus.ACCEPTED) {
+            throw new Exception("Contact not a friend");
+        }
+
+        contact.setStatus(ContactStatus.BLOCKED);
+        contactRepository.save(contact);
+    }
+
+    public void unblockContact(ContactAddDto contact) throws Exception {
+        User sender = userRepository.findByUsername(contact.getSender()).orElseThrow(
+                () -> new Exception("Sender not found")
+        );
+
+        User receiver = userRepository.findByUsername(contact.getReceiver()).orElseThrow(
+                () -> new Exception("Receiver not found")
+        );
+
+        Contact contactToUnblock = contactRepository.findBySenderAndReceiver(sender, receiver).orElseThrow(
+                () -> new Exception("Contact not found")
+        );
+
+        if (contactToUnblock.getStatus() != ContactStatus.BLOCKED) {
+            throw new Exception("Contact not blocked");
+        }
+
+        contactRepository.delete(contactToUnblock);
     }
 }
