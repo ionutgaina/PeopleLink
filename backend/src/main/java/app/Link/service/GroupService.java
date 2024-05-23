@@ -37,7 +37,7 @@ public class GroupService {
         ownerMember.setUser(owner);
         group.getMembers().add(ownerMember);
         owner.getGroups().add(ownerMember);
-        ownerMember.setRole(MemberRole.OWNER);
+        ownerMember.setRole(MemberRole.ADMIN);
 
         groupRepository.save(group);
 
