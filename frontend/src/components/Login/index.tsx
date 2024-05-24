@@ -51,8 +51,6 @@ function Login() {
           timer: 2500,
           showConfirmButton: false,
         });
-
-        throw e;
       }
     } else {
       setErrorMsg("Fill-in both username and password");

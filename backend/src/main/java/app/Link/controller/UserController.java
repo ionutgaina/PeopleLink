@@ -1,5 +1,6 @@
 package app.Link.controller;
 
+import app.Link.dto.user.UserGetDto;
 import app.Link.dto.user.UserRegisterDto;
 import app.Link.model.User;
 import app.Link.service.UserService;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,15 +43,19 @@ public class UserController {
     }
 
     @MessageMapping("/user.addUser")
-//    @SendTo("/user/public")
-    public User addUser(@Payload User user) {
-        userService.saveUser(user);
+    @SendTo("/user/public")
+    public UserGetDto addUser(
+            @Payload UserGetDto user
+    ) {
+        System.out.println("User added: " + user.getUsername());
         return user;
     }
 
     @MessageMapping("/user.disconnectUser")
-//    @SendTo("/user/public")
-    public User disconnectUser(@Payload User user) {
+    @SendTo("/user/public")
+    public User disconnectUser(
+            @Payload User user
+    ) {
         userService.disconnect(user);
         return user;
     }

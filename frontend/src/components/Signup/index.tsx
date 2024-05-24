@@ -43,8 +43,6 @@ function SignUp() {
           timer: 2500,
           showConfirmButton: false,
         });
-
-        throw e;
       }
     } else {
       setErrorMsg("Fill-in all required fields");

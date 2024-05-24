@@ -5,6 +5,10 @@ import app.Link.dto.user.UserGetDto;
 import app.Link.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,11 +20,17 @@ import java.util.List;
 @RequestMapping("/contacts")
 public class ContactController {
     private final ContactService contactService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ResponseEntity<?> addContact(@RequestBody ContactAddDto contact) {
         try {
             contactService.addContact(contact);
+            messagingTemplate.convertAndSendToUser(
+                    contact.getReceiver(),
+                    "/queue/contacts",
+                    "You have a new friend request from " + contact.getSender()
+            );
             return ResponseEntity.ok().body("Friend request sent!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -77,7 +87,7 @@ public class ContactController {
         }
     }
 
-    @GetMapping("/get")
+    @GetMapping("/")
     public ResponseEntity<?> getContacts(@RequestBody UserGetDto user) {
         try {
             List<ContactAddDto> contacts = contactService.getContacts(user);
