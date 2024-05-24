@@ -59,13 +59,7 @@ const Chat = ({ roomCode }: ChatProps) => {
                   key={i}
                 >
                   <div className="message__block">
-                    <Avatar>
-                      {user.firstName && user.lastName ? (
-                        user.firstName.charAt(0) + user.lastName.charAt(0)
-                      ) : (
-                        <PersonIcon />
-                      )}
-                    </Avatar>
+                    <Avatar>{user.username.charAt(0)}</Avatar>
                     <p
                       ref={lastMessage ? setRef : null}
                       className="chat__message"

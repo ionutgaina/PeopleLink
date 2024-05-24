@@ -87,22 +87,13 @@ function RoomDetails({ roomDetails, onRoomLeave }: RoomDetailsProps) {
 
   const generateUserList = () => {
     return users.map(({ user }: RoomUserPopulated) => {
-      const { username, firstName, lastName } = user;
+      const { username } = user;
       return (
         <ListItem key={username}>
           <ListItemAvatar>
-            <Avatar>
-              {firstName && lastName ? (
-                firstName.charAt(0) + lastName.charAt(0)
-              ) : (
-                <PersonIcon />
-              )}
-            </Avatar>
+            <Avatar>{user.username.charAt(0)}</Avatar>
           </ListItemAvatar>
-          <ListItemText
-            primary={`${firstName} ${lastName}`}
-            secondary={username}
-          />
+          <ListItemText primary={username} />
         </ListItem>
       );
     });
