@@ -42,30 +42,6 @@ public class UserController {
         }
     }
 
-    @MessageMapping("/user.addUser")
-    @SendTo("/user/public")
-    public UserGetDto addUser(
-            @Payload UserGetDto user
-    ) {
-        System.out.println("User added: " + user.getUsername());
-        return user;
-    }
-
-    @MessageMapping("/user.disconnectUser")
-    @SendTo("/user/public")
-    public User disconnectUser(
-            @Payload User user
-    ) {
-        userService.disconnect(user);
-        return user;
-    }
-
-    @MessageExceptionHandler
-//    @SendTo("/user/errors")
-    public String handleException(Throwable exception) {
-        return exception.getMessage();
-    }
-
     @GetMapping("/users")
     public ResponseEntity<List<User>> findUsers() {
         return ResponseEntity.ok(userService.findUsers());
