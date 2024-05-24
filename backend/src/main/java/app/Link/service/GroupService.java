@@ -1,7 +1,9 @@
 package app.Link.service;
 
 import app.Link.common.MemberRole;
+import app.Link.dto.group.GroupDescriptionDto;
 import app.Link.dto.group.GroupDto;
+import app.Link.dto.group.GroupInviteDto;
 import app.Link.dto.group.GroupMemberDto;
 import app.Link.dto.group.GroupRemoveDto;
 import app.Link.dto.group.GroupRemoveUserDto;
@@ -24,23 +26,43 @@ public class GroupService {
     private final DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
 
     public void createGroup(GroupDto groupDto) throws Exception {
-        if (groupRepository.findByName(groupDto.getName()).isPresent()) {
+        if (groupRepository.findByName(groupDto.getGroupName()).isPresent()) {
             throw new Exception("Group already exists");
         }
         Group group = new Group();
-        group.setName(groupDto.getName());
+        group.setName(groupDto.getGroupName());
         group.setDescription(groupDto.getDescription());
         groupRepository.save(group);
 
-        User owner = userRepository.findByUsername(groupDto.getOwner()).orElseThrow(
+        User owner = userRepository.findByUsername(groupDto.getOwnerName()).orElseThrow(
             () -> new Exception("Owner not found")
         );
 
-        addUser(new GroupMemberDto(groupDto.getName(), owner.getUsername(), MemberRole.ADMIN));
+        addUser(new GroupMemberDto(group.getName(), owner.getUsername(), MemberRole.ADMIN));
 
         for (String member : groupDto.getMembers()) {
-            addUser(new GroupMemberDto(groupDto.getName(), member, MemberRole.MEMBER));
+            addUser(new GroupMemberDto(group.getName(), member, MemberRole.MEMBER));
         }
+    }
+
+    public void inviteUser(GroupInviteDto groupInviteDto) throws Exception {
+        User admin = userRepository.findByUsername(groupInviteDto.getAdminName()).orElseThrow(
+                () -> new Exception("Admin not found")
+        );
+
+        Group group = groupRepository.findByName(groupInviteDto.getGroupName()).orElseThrow(
+                () -> new Exception("Group does not exist")
+        );
+
+        GroupMember adminMember = groupMemberRepository.findByUserAndGroup(admin, group).orElseThrow(
+                () -> new Exception("You are not a member of this group")
+        );
+
+        if (adminMember.getRole() != MemberRole.ADMIN) {
+            throw new Exception("You are not an admin of this group");
+        }
+
+        addUser(new GroupMemberDto(group.getName(), groupInviteDto.getUserName(), MemberRole.MEMBER));
     }
 
     public void addUser(GroupMemberDto groupMemberDto) throws Exception {
@@ -48,7 +70,7 @@ public class GroupService {
                 () -> new Exception("Group does not exist")
         );
 
-        User user = userRepository.findByUsername(groupMemberDto.getUsername()).orElseThrow(
+        User user = userRepository.findByUsername(groupMemberDto.getUserName()).orElseThrow(
                 () -> new Exception("User not found")
         );
 
@@ -70,7 +92,7 @@ public class GroupService {
                 () -> new Exception("Group not found")
         );
 
-        User user = userRepository.findByUsername(groupRemoveDto.getUsername()).orElseThrow(
+        User user = userRepository.findByUsername(groupRemoveDto.getAdminName()).orElseThrow(
                 () -> new Exception("User not found")
         );
 
@@ -119,5 +141,14 @@ public class GroupService {
 
         group.getMembers().remove(removeUserGroupMember);
         groupMemberRepository.delete(removeUserGroupMember);
+    }
+
+    public void changeDescription(GroupDescriptionDto groupDescriptionDto) throws Exception {
+        Group group = groupRepository.findByName(groupDescriptionDto.getGroupName()).orElseThrow(
+                () -> new Exception("Group not found")
+        );
+
+        group.setDescription(groupDescriptionDto.getDescription());
+        groupRepository.save(group);
     }
 }

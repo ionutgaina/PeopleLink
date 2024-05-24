@@ -6,8 +6,8 @@ import java.util.List;
 
 @Data
 public class GroupDto {
-    private String owner;
-    private String name;
+    private String ownerName;
+    private String groupName;
     private String description;
     private List<String> members;
 }

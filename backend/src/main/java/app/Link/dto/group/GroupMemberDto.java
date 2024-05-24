@@ -8,6 +8,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class GroupMemberDto {
     private String groupName;
-    private String username;
+    private String userName;
     private MemberRole role;
 }
