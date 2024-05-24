@@ -4,6 +4,8 @@ import app.Link.common.ContactStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -30,5 +32,5 @@ public class Contact {
     private ContactStatus status = ContactStatus.PENDING;
 
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL)
-    private Set<Message> messages;
+    private List<Message> messages = new ArrayList<>();
 }

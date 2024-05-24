@@ -1,6 +1,11 @@
 package app.Link.controller;
 
+import app.Link.dto.group.*;
+import app.Link.dto.group.GroupDescriptionDto;
 import app.Link.dto.group.GroupDto;
+import app.Link.dto.group.GroupInviteDto;
+import app.Link.dto.group.GroupRemoveDto;
+import app.Link.dto.group.GroupRemoveUserDto;
 import app.Link.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +23,56 @@ public class GroupController {
         try {
             groupService.createGroup(groupDto);
             return ResponseEntity.ok().body("Group created!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeGroup(@RequestBody GroupRemoveDto groupRemoveDto) {
+        try {
+            groupService.removeGroup(groupRemoveDto);
+            return ResponseEntity.ok().body("Group removed!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/removeMember")
+    public ResponseEntity<?> removeMember(@RequestBody GroupRemoveUserDto groupRemoveDto) {
+        try {
+            groupService.removeMember(groupRemoveDto);
+            return ResponseEntity.ok().body("Member removed!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/invite")
+    public ResponseEntity<?> inviteToGroup(@RequestBody GroupInviteDto groupInviteDto) {
+        try {
+            groupService.inviteUser(groupInviteDto);
+            return ResponseEntity.ok().body("User added!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/changeDesc")
+    public ResponseEntity<?> changeDescription(@RequestBody GroupDescriptionDto groupDto) {
+        try {
+            groupService.changeDescription(groupDto);
+            return ResponseEntity.ok().body("Description changed!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/leave")
+    public ResponseEntity<?> leaveGroup(@RequestBody GroupLeaveDto groupLeaveDto) {
+        try {
+            groupService.leaveGroup(groupLeaveDto);
+            return ResponseEntity.ok().body("Left group!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
