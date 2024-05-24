@@ -27,19 +27,18 @@ public class GroupService {
         Group group = new Group();
         group.setName(groupDto.getName());
         group.setDescription(groupDto.getDescription());
-        group.setMembers(new ArrayList<>());
 
         User owner = userRepository.findByUsername(groupDto.getOwner()).orElseThrow(
             () -> new RuntimeException("Owner not found")
         );
+
         GroupMember ownerMember = new GroupMember();
         ownerMember.setGroup(group);
         ownerMember.setUser(owner);
-        group.getMembers().add(ownerMember);
-        owner.getGroups().add(ownerMember);
         ownerMember.setRole(MemberRole.OWNER);
 
         groupRepository.save(group);
+        groupMemberRepository.save(ownerMember);
 
         for (String member : groupDto.getMembers()) {
             User user = userRepository.findByUsername(member).orElse(null);
@@ -48,13 +47,9 @@ public class GroupService {
             }
             GroupMember groupMember = new GroupMember();
             groupMember.setGroup(group);
-            group.getMembers().add(groupMember);
-            user.getGroups().add(groupMember);
             groupMember.setUser(user);
 
             groupMemberRepository.save(groupMember);
         }
-
-        groupRepository.save(group);
     }
 }
