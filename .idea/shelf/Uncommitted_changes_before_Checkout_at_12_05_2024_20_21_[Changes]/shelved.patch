@@ -1,0 +1,17 @@
+Index: backend/src/main/java/app/Link/model/Message.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package app.Link.model;\n\nimport jakarta.persistence.*;\nimport lombok.AllArgsConstructor;\nimport lombok.Builder;\nimport lombok.Data;\nimport lombok.NoArgsConstructor;\n\n@Data\n@Builder\n@NoArgsConstructor\n@AllArgsConstructor\n@Entity\n@Table(name = \"messages\")\npublic class Message {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(name = \"sender_id\", nullable = false)\n    private Long senderId;\n\n    @Column(name = \"receiver_id\", nullable = false)\n    private Long receiverId;\n\n    @Lob\n    @Column(name = \"text\", nullable = false)\n    private String text;\n\n    @Column(name = \"media_link\")\n    private String mediaLink;\n\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/src/main/java/app/Link/model/Message.java b/backend/src/main/java/app/Link/model/Message.java
+--- a/backend/src/main/java/app/Link/model/Message.java	
++++ b/backend/src/main/java/app/Link/model/Message.java	
+@@ -29,6 +29,4 @@
+ 
+     @Column(name = "media_link")
+     private String mediaLink;
+-
+-
+ }
