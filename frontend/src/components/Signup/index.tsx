@@ -1,58 +1,78 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import "./style.css";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { register } from "../../services/Auth";
+import Swal from "sweetalert2";
+import { useUser } from "../../context/UserContext";
 
-export interface SignUpProps {
-  history: ReturnType<typeof useHistory>;
-}
 
-function SignUp({ history }: SignUpProps) {
+function SignUp() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const firstNameRef = useRef<HTMLInputElement>(null);
-  const lastNameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const { userDetails } = useUser();
 
-	const proceed = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		e.preventDefault();
+  const navigate = useNavigate();
 
-		if (canProceed() && firstNameRef.current && passwordRef.current) {
-			setErrorMsg('');
-			history.push('/login');
-		} else {
-			setErrorMsg('Fill-in all required fields');
-		}
-	};
+  const proceed = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    
+    if (canProceed() && passwordRef.current) {
+      setErrorMsg("");
 
-  const canProceed = () => {
-    return (
-      username &&
-      email &&
-      firstNameRef.current &&
-      passwordRef.current &&
-      passwordRef.current.value &&
-      firstNameRef.current.value
-    );
+      try {
+        await register(username, passwordRef.current.value);
+
+        // success message
+        const response = "Successfully registered!";
+
+        Swal.fire({
+          title: response,
+          icon: "success",
+          showConfirmButton: true,
+        }).then(() => navigate("/login"));
+      } catch (e: any) {
+        // Error message
+        Swal.fire({
+          title: e.response.data,
+          icon: "error",
+          timer: 2500,
+          showConfirmButton: false,
+        });
+      }
+    } else {
+      setErrorMsg("Fill-in all required fields");
+    }
   };
 
+  const canProceed = () => {
+    return username && passwordRef.current && passwordRef.current.value;
+  };
+
+  useEffect(
+		() => {
+			if (userDetails.username !== "") {
+				navigate('/room');
+			}
+		},
+		[userDetails ]
+	);
+
+
   return (
-    <div className="signup auth__wrapper">
-      <div className="signup__area area__wrapper">
+    <div className="login auth__wrapper">
+      <div className="login__area area__wrapper">
+        <h1>PLink Register</h1>
         <form>
           <DebounceInput
             debounceTimeout={300}
-            onChange={(e) => {setEmail(e.target.value);}}
-            value={email}
-            type="text"
-            placeholder="Email"
-            required
-          />
-          <DebounceInput
-            debounceTimeout={300}
-            onChange={(e) => {setUsername(e.target.value);}}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
             value={username}
             type="text"
             placeholder="Username"
@@ -64,15 +84,6 @@ function SignUp({ history }: SignUpProps) {
             placeholder="Password"
             required
           />
-          <div className="signup__name">
-            <input
-              ref={firstNameRef}
-              type="text"
-              placeholder="First Name"
-              required
-            />
-            <input ref={lastNameRef} type="text" placeholder="Last Name" />
-          </div>
 
           <Button
             onClick={proceed}
@@ -84,6 +95,17 @@ function SignUp({ history }: SignUpProps) {
           >
             Proceed
           </Button>
+          <p>
+            Already have an account?
+            <b
+              className="signup__link header__text"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Go to Login
+            </b>
+          </p>
         </form>
         {errorMsg && <strong className="error__msg">{errorMsg}</strong>}
       </div>

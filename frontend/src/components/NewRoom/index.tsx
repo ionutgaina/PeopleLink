@@ -5,7 +5,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-} from "@material-ui/core";
+} from "@mui/material";
 import "./style.css";
 import { RoomPopulated } from "../../types";
 

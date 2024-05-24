@@ -1,6 +1,6 @@
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import React, { useState } from 'react';
-import SendIcon from '@material-ui/icons/Send';
+import SendIcon from '@mui/icons-material/Send';
 import { User } from '../../types';
 import './style.css';
 import { messageData } from '../../constants';

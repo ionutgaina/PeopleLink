@@ -1,5 +1,6 @@
-import { IconButton, Snackbar } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { IconButton, Snackbar, SnackbarCloseReason  } from '@mui/material';
+import { SyntheticEvent, MouseEvent } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 import './style.css';
 
@@ -10,12 +11,15 @@ export interface GeneralSnackbarProps {
 }
 
 function GeneralSnackbar({ message, open, onClose }: GeneralSnackbarProps) {
-	const handleClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
+	const handleClose = (
+		event: Event | SyntheticEvent<Element, Event> | MouseEvent<Element, MouseEvent>,
+		reason?: SnackbarCloseReason
+	  ) => {
 		if (reason === 'clickaway') {
-			return;
+		  return;
 		}
 		onClose();
-	};
+	  };
 
 	return (
 		<div className="general__snackbar">

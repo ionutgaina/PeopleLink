@@ -1,6 +1,6 @@
-import { Avatar } from "@material-ui/core";
+import { Avatar } from "@mui/material";
 import { useState, useEffect, useCallback } from "react";
-import Scrollbar from "react-scrollbars-custom";
+import { Scrollbars } from 'react-custom-scrollbars-2';
 import "./style.css";
 import { MessagePopulated } from "../../types";
 import {
@@ -9,7 +9,7 @@ import {
   format,
   formatDistanceToNow,
 } from "date-fns";
-import PersonIcon from "@material-ui/icons/Person";
+import PersonIcon from "@mui/icons-material/Person";
 import { useUser } from "../../context/UserContext";
 import ChatHeader from "../ChatHeader";
 import ChatFooter from "../ChatFooter";
@@ -22,11 +22,12 @@ export interface ChatProps {
 const Chat = ({ roomCode }: ChatProps) => {
   const [messages, setMessages] = useState([] as MessagePopulated[]);
   const { userDetails } = useUser();
-  const setRef = useCallback((node) => {
+  const setRef = useCallback((node: HTMLElement | null) => {
     if (node) {
-      node.scrollIntoView({ smooth: true });
+      node.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
+  
 
   useEffect(() => {
     setMessages(messageData.filter((msg) => msg.roomCode === roomCode));
@@ -46,7 +47,7 @@ const Chat = ({ roomCode }: ChatProps) => {
         formatDate={formatDate}
       />
       <div className="chat__body">
-        <Scrollbar className="chat__scrollbar">
+        <Scrollbars className="chat__scrollbar">
           <div className="chat__main">
             {messages.map(({ content, user, createdAt }, i) => {
               const lastMessage = messages.length - 1 === i;
@@ -59,13 +60,7 @@ const Chat = ({ roomCode }: ChatProps) => {
                   key={i}
                 >
                   <div className="message__block">
-                    <Avatar>
-                      {user.firstName && user.lastName ? (
-                        user.firstName.charAt(0) + user.lastName.charAt(0)
-                      ) : (
-                        <PersonIcon />
-                      )}
-                    </Avatar>
+                    <Avatar>{user.username.charAt(0)}</Avatar>
                     <p
                       ref={lastMessage ? setRef : null}
                       className="chat__message"
@@ -85,7 +80,7 @@ const Chat = ({ roomCode }: ChatProps) => {
               );
             })}
           </div>
-        </Scrollbar>
+        </Scrollbars>
       </div>
       <ChatFooter roomCode={roomCode} loggedInUser={userDetails} />
     </div>

@@ -16,10 +16,7 @@ export enum MessageStatus {
 }
 
 export const USER_INITIAL_VALUE = {
-	username: 'test',
-	firstName: 'firstname',
-	lastName: 'lastname',
-	email: 'test@gmail.com'
+	username: '',
 };
 
 export const usersData = [
