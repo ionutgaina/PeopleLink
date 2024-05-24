@@ -1,5 +1,6 @@
 package app.Link.controller;
 
+import app.Link.dto.group.GroupDescriptionDto;
 import app.Link.dto.group.GroupDto;
 import app.Link.dto.group.GroupRemoveDto;
 import app.Link.service.GroupService;
@@ -29,6 +30,16 @@ public class GroupController {
         try {
             groupService.removeGroup(groupRemoveDto);
             return ResponseEntity.ok().body("Group removed!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/changeDesc")
+    public ResponseEntity<?> changeDescription(@RequestBody GroupDescriptionDto groupDto) {
+        try {
+            groupService.changeDescription(groupDto);
+            return ResponseEntity.ok().body("Description changed!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
