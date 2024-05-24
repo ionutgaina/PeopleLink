@@ -1,6 +1,8 @@
 package app.Link.controller;
 
 import app.Link.dto.group.GroupDto;
+import app.Link.dto.group.GroupInviteDto;
+import app.Link.dto.group.GroupMemberDto;
 import app.Link.dto.group.GroupRemoveDto;
 import app.Link.service.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,16 @@ public class GroupController {
         try {
             groupService.removeGroup(groupRemoveDto);
             return ResponseEntity.ok().body("Group removed!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/invite")
+    public ResponseEntity<?> inviteToGroup(@RequestBody GroupInviteDto groupInviteDto) {
+        try {
+            groupService.inviteUser(groupInviteDto);
+            return ResponseEntity.ok().body("User added!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
