@@ -10,7 +10,8 @@ import { roomData, usersData } from "../../constants";
 import ContactDetails from "../ContactDetails";
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-
+import { Stomp } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 
 const Room = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -18,22 +19,40 @@ const Room = () => {
   const snackbarMsg = useRef("");
   const [rooms, setRooms] = useState([] as RoomPopulated[]);
   const [users, setUsers] = useState([] as ContactPopulated[]);
-  const [roomCode, setRoomCode] = useState('');
+  const [roomCode, setRoomCode] = useState("");
   const currentUser = useUser();
 
   const navigate = useNavigate();
 
-
   useEffect(() => {
+    function OnConnected() {
+      stompClient.subscribe(`/user/public`, (data) => {
+        console.log("Received data", JSON.parse(data.body));
+      });
+
+      // register the connected user
+      stompClient.send(
+        "/app/user.addUser",
+        {},
+        JSON.stringify({ username: currentUser.userDetails.username })
+      );
+    }
+
     if (currentUser.userDetails.username === "") {
       navigate("/login");
     }
-  }
-  , [currentUser]);
+
+    const socket = new SockJS("http://localhost:8080/ws");
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, OnConnected, (error: any) => {
+      console.log("Error connecting to websocket", error);
+    });
+  }, [currentUser]);
 
   useEffect(() => {
-	setRooms(roomData);
-  setUsers(usersData);
+    setRooms(roomData);
+    setUsers(usersData);
   }, []);
 
   const getCurrentRoom = () => {
@@ -42,9 +61,7 @@ const Room = () => {
 
   const getCurrentContact = () => {
     return users.find((user) => user.username === roomCode);
-  }
-
-
+  };
 
   const handleRoomClick = (code: string) => {
     setRoomCode(code);
@@ -55,8 +72,7 @@ const Room = () => {
     setUsers((prevUsers: ContactPopulated[]) => {
       const newUsers = [...prevUsers];
       return newUsers;
-    }
-    );
+    });
   };
 
   const handleRoomLeave = (code: string) => {
@@ -77,26 +93,30 @@ const Room = () => {
       <Sidebar
         onNewRoom={() => setOpenModal(true)}
         rooms={rooms}
-        users={users.filter((user) => user.username !== currentUser.userDetails?.username)}
+        users={users.filter(
+          (user) => user.username !== currentUser.userDetails?.username
+        )}
         onRoomClick={handleRoomClick}
       />
       {roomCode ? (
         <React.Fragment>
           <Chat roomCode={roomCode} />
-          {
-            users.find((user) => user.username === roomCode) ? (
-              <ContactDetails
-                contactDetails={getCurrentContact()!}
-                onUnfriend={() => {console.log('unfriend');}}
-                onBlock={() => {console.log('block');}}
-              />
-            ) : (
-              <RoomDetails
-                roomDetails={getCurrentRoom()!}
-                onRoomLeave={handleRoomLeave}
-              />
-            )
-          }
+          {users.find((user) => user.username === roomCode) ? (
+            <ContactDetails
+              contactDetails={getCurrentContact()!}
+              onUnfriend={() => {
+                console.log("unfriend");
+              }}
+              onBlock={() => {
+                console.log("block");
+              }}
+            />
+          ) : (
+            <RoomDetails
+              roomDetails={getCurrentRoom()!}
+              onRoomLeave={handleRoomLeave}
+            />
+          )}
         </React.Fragment>
       ) : (
         <div className="chat chat--no-room">
