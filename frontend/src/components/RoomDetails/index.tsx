@@ -7,14 +7,14 @@ import {
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
-} from "@material-ui/core";
+} from "@mui/material";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useUser } from "../../context/UserContext";
-import PhotoIcon from "@material-ui/icons/Photo";
-import MeetingRoomIcon from "@material-ui/icons/MeetingRoom";
-import DeleteIcon from "@material-ui/icons/Delete";
-import PersonIcon from "@material-ui/icons/Person";
-import GroupIcon from "@material-ui/icons/Group";
+import PhotoIcon from "@mui/icons-material/Photo";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PersonIcon from "@mui/icons-material/Person";
+import GroupIcon from "@mui/icons-material/Group";
 import { RoomPopulated, RoomUserPopulated } from "../../types";
 
 export interface RoomDetailsProps {

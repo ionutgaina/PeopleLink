@@ -1,27 +1,28 @@
-import { Avatar, IconButton, Menu, MenuItem } from "@material-ui/core";
+import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
-import ChatIcon from "@material-ui/icons/Chat";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import PersonIcon from "@material-ui/icons/Person";
+import ChatIcon from "@mui/icons-material/Chat";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PersonIcon from "@mui/icons-material/Person";
 import { USER_INITIAL_VALUE } from "../../constants";
 import { useUser } from "../../context/UserContext";
 import "./style.css";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export interface SidebarHeaderProps {
-  history: ReturnType<typeof useHistory>;
   onNewRoom: () => void;
 }
 
-function SidebarHeader({ history, onNewRoom }: SidebarHeaderProps) {
+function SidebarHeader({ onNewRoom }: SidebarHeaderProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { userDetails, setUserDetails } = useUser();
+
+  const navigate = useNavigate();
 
   const onLogout = () => {
     setAnchorEl(null);
     localStorage.clear();
     setUserDetails(USER_INITIAL_VALUE);
-    history.push("/login");
+    navigate("/login");
   };
   return (
     <div className="sidebar__header">

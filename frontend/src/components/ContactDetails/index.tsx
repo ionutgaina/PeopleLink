@@ -6,12 +6,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from "@material-ui/core";
+} from "@mui/material";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useUser } from "../../context/UserContext";
-import MeetingRoomIcon from "@material-ui/icons/MeetingRoom";
-import DeleteIcon from "@material-ui/icons/Delete";
-import GroupIcon from "@material-ui/icons/Group";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import GroupIcon from "@mui/icons-material/Group";
 import { ContactPopulated } from "../../types";
 
 export interface ContactDetailsProps {

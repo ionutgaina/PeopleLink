@@ -1,27 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import "./style.css";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { register } from "../../services/Auth";
 import Swal from "sweetalert2";
 import { useUser } from "../../context/UserContext";
 
-export interface SignUpProps {
-  history: ReturnType<typeof useHistory>;
-}
 
-function SignUp({ history }: SignUpProps) {
+function SignUp() {
   const [username, setUsername] = useState("");
   const passwordRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const { userDetails } = useUser();
 
+  const navigate = useNavigate();
+
   const proceed = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-
+    
     if (canProceed() && passwordRef.current) {
       setErrorMsg("");
 
@@ -35,7 +34,7 @@ function SignUp({ history }: SignUpProps) {
           title: response,
           icon: "success",
           showConfirmButton: true,
-        }).then(() => history.push("/login"));
+        }).then(() => navigate("/login"));
       } catch (e: any) {
         // Error message
         Swal.fire({
@@ -59,10 +58,10 @@ function SignUp({ history }: SignUpProps) {
   useEffect(
 		() => {
 			if (userDetails.username !== "") {
-				history.push('/room');
+				navigate('/room');
 			}
 		},
-		[ history, userDetails ]
+		[userDetails ]
 	);
 
 
@@ -103,7 +102,7 @@ function SignUp({ history }: SignUpProps) {
             <b
               className="signup__link header__text"
               onClick={() => {
-                history.push("/login");
+                navigate("/login");
               }}
             >
               Go to Login

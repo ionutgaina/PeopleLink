@@ -5,17 +5,14 @@ import Sidebar from "../Sidebar";
 import NewRoom from "../NewRoom";
 import RoomDetails from "../RoomDetails";
 import GeneralSnackbar from "../GeneralSnackbar";
-import { useHistory } from "react-router-dom";
 import { ContactPopulated, RoomPopulated } from "../../types";
 import { roomData, usersData } from "../../constants";
 import ContactDetails from "../ContactDetails";
 import { useUser } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
-export interface RoomProps {
-  history: ReturnType<typeof useHistory>;
-}
 
-const Room = ({ history }: RoomProps) => {
+const Room = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const snackbarMsg = useRef("");
@@ -24,13 +21,15 @@ const Room = ({ history }: RoomProps) => {
   const [roomCode, setRoomCode] = useState('');
   const currentUser = useUser();
 
+  const navigate = useNavigate();
+
+
   useEffect(() => {
     if (currentUser.userDetails.username === "") {
-      history.push("/login");
+      navigate("/login");
     }
   }
-  , [currentUser, history]);
-
+  , [currentUser]);
 
   useEffect(() => {
 	setRooms(roomData);
@@ -79,7 +78,6 @@ const Room = ({ history }: RoomProps) => {
         onNewRoom={() => setOpenModal(true)}
         rooms={rooms}
         users={users.filter((user) => user.username !== currentUser.userDetails?.username)}
-        history={history}
         onRoomClick={handleRoomClick}
       />
       {roomCode ? (

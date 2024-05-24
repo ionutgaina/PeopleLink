@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import "./style.css";
 import { useUser } from "../../context/UserContext";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { login } from "../../services/Auth";
 import { User } from "../../types";
 
-export interface LoginProps {
-  history: ReturnType<typeof useHistory>;
-}
-function Login({ history }: LoginProps) {
+function Login() {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const { userDetails, setUserDetails } = useUser();
+
+  const navigate = useNavigate();
 
   const proceed = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -42,7 +41,7 @@ function Login({ history }: LoginProps) {
             username: usernameRef.current.value,
           } as User);
           localStorage.setItem("user", usernameRef.current.value);
-          history.push("/room");
+          navigate("/room");
         });
       } catch (e: any) {
         // Error message
@@ -61,7 +60,7 @@ function Login({ history }: LoginProps) {
   };
 
   const goToSignup = async () => {
-    history.push("/signup");
+    navigate("/signup");
   };
 
   useEffect(() => {
@@ -70,9 +69,9 @@ function Login({ history }: LoginProps) {
 
   useEffect(() => {
     if (userDetails.username !== "") {
-      history.push("/room");
+      navigate("/room");
     }
-  }, [history, userDetails]);
+  }, [userDetails]);
 
   return (
     <div className="login auth__wrapper">

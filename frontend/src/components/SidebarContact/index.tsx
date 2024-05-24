@@ -1,6 +1,6 @@
-import { Avatar } from "@material-ui/core";
+import { Avatar } from "@mui/material";
 import React from "react";
-import GroupIcon from "@material-ui/icons/Group";
+import GroupIcon from "@mui/icons-material/Group";
 import { ContactPopulated, User } from "../../types";
 import "./style.css";
 
