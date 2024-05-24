@@ -1,6 +1,6 @@
 import { createContext, useContext, Context } from "react";
-import { mySocket } from "../services/Socket";
+import { Client } from "@stomp/stompjs";
 
-export const SocketContext: Context<mySocket> = createContext(new mySocket());
+export const SocketContext: Context<Client> = createContext({} as Client);
 
-export const useSocket = () => useContext(SocketContext);
+export let useSocket = () => useContext(SocketContext);

@@ -2,11 +2,11 @@ import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import ChatIcon from "@mui/icons-material/Chat";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import PersonIcon from "@mui/icons-material/Person";
 import { USER_INITIAL_VALUE } from "../../constants";
 import { useUser } from "../../context/UserContext";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../../context/SocketContext";
 
 export interface SidebarHeaderProps {
   onNewRoom: () => void;
@@ -15,6 +15,7 @@ export interface SidebarHeaderProps {
 function SidebarHeader({ onNewRoom }: SidebarHeaderProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { userDetails, setUserDetails } = useUser();
+  const socket = useSocket();
 
   const navigate = useNavigate();
 
@@ -22,6 +23,7 @@ function SidebarHeader({ onNewRoom }: SidebarHeaderProps) {
     setAnchorEl(null);
     localStorage.clear();
     setUserDetails(USER_INITIAL_VALUE);
+    socket.deactivate();
     navigate("/login");
   };
   return (

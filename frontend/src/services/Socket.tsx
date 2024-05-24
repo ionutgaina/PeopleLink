@@ -1,32 +1,38 @@
-import { Stomp } from "@stomp/stompjs";
+import { Client, StompConfig } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
-export class mySocket {
-  private socket = new SockJS(process.env.REACT_APP_WEBSOCKET_URL!);
-  private stompClient = Stomp.over(this.socket);
+export function mySocket(username: string): Client {
+  const stompConfig: StompConfig = {
+    
+    webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+    reconnectDelay: 5000,
+    onConnect: (frame) => {
+      console.log("Connected: " + frame);
+      stompClient.subscribe("/user/public", function (message) {
+        console.log("Received public message: ", JSON.parse(message.body));
+      });
 
-  public connect(username: string) {
-    this.stompClient.connect(
-      {},
-      () => {
-        this.stompClient.subscribe(`/user/public`, (data) => {
-          console.log("Received data", JSON.parse(data.body));
-        });
+      stompClient.subscribe(`/user/${username}/queue/contacts`, function (message) {
+        console.log("Received private message: ", JSON.parse(message.body));
+      });
+    },
+    onDisconnect: (frame) => {
+      console.log("Disconnected: " + frame);
+    },
+    onStompError: (frame) => {
+      console.error("Broker reported error: " + frame.headers['message']);
+      console.error("Additional details: " + frame.body);
+    },
+    onWebSocketError: (event) => {
+      console.error("WebSocket Error: ", event);
+    },
+    onWebSocketClose: (event) => {
+      console.log("WebSocket Closed: ", event);
+    }
+  };
 
-        this.stompClient.subscribe(
-          `/user/${username}/queue/contacts`,
-          (data) => {
-            console.log("Received data", JSON.parse(data.body));
-          }
-        );
-      },
-      (error: any) => {
-        console.log("Error connecting to websocket", error);
-      }
-    );
-  }
+  const stompClient = new Client(stompConfig);
+  stompClient.activate();
 
-  public disconnect() {
-    this.socket.close();
-  }
+  return stompClient;
 }

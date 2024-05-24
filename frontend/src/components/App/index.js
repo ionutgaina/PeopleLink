@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { createContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./style.css";
 import Room from "../Room";
@@ -8,6 +8,7 @@ import NotFound from "../NotFound";
 import { USER_INITIAL_VALUE } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import { StyledEngineProvider } from '@mui/material/styles';
+import { SocketContext, useSocket } from "../../context/SocketContext";
 
 
 const routes = [
@@ -26,7 +27,7 @@ function App() {
   return (
     <StyledEngineProvider injectFirst>
       <UserContext.Provider value={{ userDetails, setUserDetails }}>
-        {/* <StompSessionProvider url={process.env.REACT_APP_WEBSOCKET_URL}> */}
+        
           <div className="app">
             <Router>
               <Routes>
@@ -38,7 +39,7 @@ function App() {
               </Routes>
             </Router>
           </div>
-        {/* </StompSessionProvider> */}
+
       </UserContext.Provider>
     </StyledEngineProvider>
   );
