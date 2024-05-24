@@ -1,10 +1,6 @@
 package app.Link.controller;
 
-import app.Link.dto.group.GroupDescriptionDto;
-import app.Link.dto.group.GroupDto;
-import app.Link.dto.group.GroupInviteDto;
-import app.Link.dto.group.GroupMemberDto;
-import app.Link.dto.group.GroupRemoveDto;
+import app.Link.dto.group.*;
 import app.Link.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +48,16 @@ public class GroupController {
         try {
             groupService.changeDescription(groupDto);
             return ResponseEntity.ok().body("Description changed!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/leave")
+    public ResponseEntity<?> leaveGroup(@RequestBody GroupLeaveDto groupLeaveDto) {
+        try {
+            groupService.leaveGroup(groupLeaveDto);
+            return ResponseEntity.ok().body("Left group!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GroupRemoveDto {
+public class GroupLeaveDto {
     private String groupName;
-    private String adminName;
+    private String userName;
 }

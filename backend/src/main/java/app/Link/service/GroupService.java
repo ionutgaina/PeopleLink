@@ -1,11 +1,7 @@
 package app.Link.service;
 
 import app.Link.common.MemberRole;
-import app.Link.dto.group.GroupDescriptionDto;
-import app.Link.dto.group.GroupDto;
-import app.Link.dto.group.GroupInviteDto;
-import app.Link.dto.group.GroupMemberDto;
-import app.Link.dto.group.GroupRemoveDto;
+import app.Link.dto.group.*;
 import app.Link.model.Group;
 import app.Link.model.GroupMember;
 import app.Link.model.User;
@@ -117,4 +113,36 @@ public class GroupService {
         group.setDescription(groupDescriptionDto.getDescription());
         groupRepository.save(group);
     }
+
+
+    public void leaveGroup(GroupLeaveDto groupLeaveDto) throws Exception {
+        Group group = groupRepository.findByName(groupLeaveDto.getGroupName()).orElseThrow(
+                () -> new Exception("Group not found")
+        );
+
+        User user = userRepository.findByUsername(groupLeaveDto.getUserName()).orElseThrow(
+                () -> new Exception("User not found")
+        );
+
+        GroupMember member = groupMemberRepository.findByUserAndGroup(user, group).orElseThrow(
+                () -> new Exception("User not member of group")
+        );
+
+        System.out.println(group.getMembers().size());
+        if (member.getRole() == MemberRole.ADMIN && group.getMembers().size() > 1) {
+            for (GroupMember groupMember : group.getMembers()) {
+                if (groupMember.getRole() == MemberRole.MEMBER) {
+                    groupMember.setRole(MemberRole.ADMIN);
+                    groupMemberRepository.save(groupMember);
+                    break;
+                }
+            }
+        } else if (member.getRole() == MemberRole.ADMIN && group.getMembers().size() == 1) {
+            this.removeGroup(new GroupRemoveDto(group.getName(), user.getUsername()));
+        }
+
+        group.getMembers().remove(member);
+        groupMemberRepository.delete(member);
+    }
+
 }
