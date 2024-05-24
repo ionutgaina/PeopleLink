@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DebounceInput } from "react-debounce-input";
 import { Button } from "@material-ui/core";
 import "./style.css";
 import { useHistory } from "react-router-dom";
 import { register } from "../../services/Auth";
 import Swal from "sweetalert2";
+import { useUser } from "../../context/UserContext";
 
 export interface SignUpProps {
   history: ReturnType<typeof useHistory>;
@@ -14,6 +15,7 @@ function SignUp({ history }: SignUpProps) {
   const [username, setUsername] = useState("");
   const passwordRef = useRef<HTMLInputElement>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const { userDetails } = useUser();
 
   const proceed = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -53,6 +55,16 @@ function SignUp({ history }: SignUpProps) {
   const canProceed = () => {
     return username && passwordRef.current && passwordRef.current.value;
   };
+
+  useEffect(
+		() => {
+			if (userDetails.username !== "") {
+				history.push('/room');
+			}
+		},
+		[ history, userDetails ]
+	);
+
 
   return (
     <div className="login auth__wrapper">

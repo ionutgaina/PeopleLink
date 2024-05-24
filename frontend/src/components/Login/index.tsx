@@ -5,6 +5,7 @@ import { useUser } from "../../context/UserContext";
 import { useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import { login } from "../../services/Auth";
+import { User } from "../../types";
 
 export interface LoginProps {
   history: ReturnType<typeof useHistory>;
@@ -34,7 +35,15 @@ function Login({ history }: LoginProps) {
           title: response,
           icon: "success",
           showConfirmButton: true,
-        }).then(() => history.push("/room"));
+        }).then(() => {
+          if (!usernameRef.current) return;
+
+          setUserDetails({
+            username: usernameRef.current.value,
+          } as User);
+          localStorage.setItem("user", usernameRef.current.value);
+          history.push("/room");
+        });
       } catch (e: any) {
         // Error message
         Swal.fire({
@@ -58,6 +67,12 @@ function Login({ history }: LoginProps) {
   useEffect(() => {
     if (usernameRef.current) usernameRef.current.focus();
   }, []);
+
+  useEffect(() => {
+    if (userDetails.username !== "") {
+      history.push("/room");
+    }
+  }, [history, userDetails]);
 
   return (
     <div className="login auth__wrapper">

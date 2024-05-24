@@ -18,8 +18,11 @@ const routes = [
 
 
 function App() {
-	const [ userDetails, setUserDetails ] = useState(USER_INITIAL_VALUE);
-
+	const username = localStorage.getItem('user');
+	const user =  {
+		username: username || USER_INITIAL_VALUE.username,
+	};
+	const [ userDetails, setUserDetails ] = useState(user);
 	return (
 		<StylesProvider injectFirst>
 			<UserContext.Provider value={{ userDetails, setUserDetails }}>

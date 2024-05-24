@@ -25,6 +25,14 @@ const Room = ({ history }: RoomProps) => {
   const currentUser = useUser();
 
   useEffect(() => {
+    if (currentUser.userDetails.username === "") {
+      history.push("/login");
+    }
+  }
+  , [currentUser, history]);
+
+
+  useEffect(() => {
 	setRooms(roomData);
   setUsers(usersData);
   }, []);
