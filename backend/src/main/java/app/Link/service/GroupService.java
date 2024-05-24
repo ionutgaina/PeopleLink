@@ -1,7 +1,16 @@
 package app.Link.service;
 
 import app.Link.common.MemberRole;
+
 import app.Link.dto.group.*;
+
+import app.Link.dto.group.GroupDescriptionDto;
+import app.Link.dto.group.GroupDto;
+import app.Link.dto.group.GroupInviteDto;
+import app.Link.dto.group.GroupMemberDto;
+import app.Link.dto.group.GroupRemoveDto;
+import app.Link.dto.group.GroupRemoveUserDto;
+
 import app.Link.model.Group;
 import app.Link.model.GroupMember;
 import app.Link.model.User;
@@ -103,6 +112,39 @@ public class GroupService {
 
         groupMemberRepository.deleteAll(group.getMembers());
         groupRepository.delete(group);
+    }
+
+    public void removeMember(GroupRemoveUserDto groupRemoveUserDto) throws Exception {
+        Group group = groupRepository.findByName(groupRemoveUserDto.getGroupName()).orElseThrow(
+                () -> new Exception("Group not found")
+        );
+
+        User adminUser = userRepository.findByUsername(groupRemoveUserDto.getUsername()).orElseThrow(
+                () -> new Exception("Admin user not found")
+        );
+
+        User removeUser = userRepository.findByUsername(groupRemoveUserDto.getRemoveUsername()).orElseThrow(
+                () -> new Exception("Remove user not found")
+        );
+
+        GroupMember adminGroupMember = groupMemberRepository.findByUserAndGroup(adminUser, group).orElseThrow(
+                () -> new Exception("Admin user not found in the selected group")
+        );
+
+        GroupMember removeUserGroupMember = groupMemberRepository.findByUserAndGroup(removeUser, group).orElseThrow(
+                () -> new Exception("Remove user not found in the selected group")
+        );
+
+        if (adminUser.getUsername().equals(removeUser.getUsername())) {
+            throw new Exception("You cannot remove yourself. Try exiting the group instead.");
+        }
+
+        if (adminGroupMember.getRole() != MemberRole.ADMIN) {
+            throw new Exception("User is not an admin in this group. Unable to remove other users");
+        }
+
+        group.getMembers().remove(removeUserGroupMember);
+        groupMemberRepository.delete(removeUserGroupMember);
     }
 
     public void changeDescription(GroupDescriptionDto groupDescriptionDto) throws Exception {
