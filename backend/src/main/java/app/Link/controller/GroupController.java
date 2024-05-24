@@ -1,6 +1,7 @@
 package app.Link.controller;
 
 import app.Link.dto.group.GroupDto;
+import app.Link.dto.group.GroupRemoveDto;
 import app.Link.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,16 @@ public class GroupController {
         try {
             groupService.createGroup(groupDto);
             return ResponseEntity.ok().body("Group created!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeGroup(@RequestBody GroupRemoveDto groupRemoveDto) {
+        try {
+            groupService.removeGroup(groupRemoveDto);
+            return ResponseEntity.ok().body("Group removed!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
