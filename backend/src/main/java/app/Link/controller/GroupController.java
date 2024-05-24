@@ -1,5 +1,6 @@
 package app.Link.controller;
 
+import app.Link.dto.group.GroupDescriptionDto;
 import app.Link.dto.group.GroupDto;
 import app.Link.dto.group.GroupInviteDto;
 import app.Link.dto.group.GroupMemberDto;
@@ -41,6 +42,16 @@ public class GroupController {
         try {
             groupService.inviteUser(groupInviteDto);
             return ResponseEntity.ok().body("User added!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/changeDesc")
+    public ResponseEntity<?> changeDescription(@RequestBody GroupDescriptionDto groupDto) {
+        try {
+            groupService.changeDescription(groupDto);
+            return ResponseEntity.ok().body("Description changed!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }

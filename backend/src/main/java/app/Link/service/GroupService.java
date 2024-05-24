@@ -1,6 +1,7 @@
 package app.Link.service;
 
 import app.Link.common.MemberRole;
+import app.Link.dto.group.GroupDescriptionDto;
 import app.Link.dto.group.GroupDto;
 import app.Link.dto.group.GroupInviteDto;
 import app.Link.dto.group.GroupMemberDto;
@@ -106,5 +107,14 @@ public class GroupService {
 
         groupMemberRepository.deleteAll(group.getMembers());
         groupRepository.delete(group);
+    }
+
+    public void changeDescription(GroupDescriptionDto groupDescriptionDto) throws Exception {
+        Group group = groupRepository.findByName(groupDescriptionDto.getGroupName()).orElseThrow(
+                () -> new Exception("Group not found")
+        );
+
+        group.setDescription(groupDescriptionDto.getDescription());
+        groupRepository.save(group);
     }
 }
