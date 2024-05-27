@@ -109,7 +109,6 @@ public class ContactController {
         }
     }
 
-    // probabil nu e nevoie de asta
     @PostMapping("/cancel")
     public ResponseEntity<?> cancelContact(@RequestBody ContactAddDto contact) {
         try {
