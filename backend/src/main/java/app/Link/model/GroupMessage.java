@@ -18,13 +18,14 @@ public class GroupMessage {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
-    private GroupMember member;
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 
     @Lob
     @Column(name = "text", nullable = false)
     private String text;
-
-    @Column(name = "media_link")
-    private String mediaLink;
 }

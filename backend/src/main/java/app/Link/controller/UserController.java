@@ -38,7 +38,7 @@ public class UserController {
             User authenticatedUser = userService.authenticateUser(userRegisterDto.getUsername(), userRegisterDto.getPassword());
             return ResponseEntity.ok().body("Authenticated user: " + authenticatedUser);
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Error: " + e.getMessage());
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
     }
 

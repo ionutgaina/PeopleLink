@@ -25,9 +25,6 @@ public class Message {
     @Column(name = "text", nullable = false)
     private String text;
 
-    @Column(name = "media_link")
-    private String mediaLink;
-
     @ManyToOne
     @JoinColumn(name = "contact_id", nullable = false)
     private Contact contact;

@@ -31,14 +31,6 @@ public class UserService {
         throw new Exception("Invalid username or password");
     }
 
-    public void saveUser(User user) {
-        repository.save(user);
-    }
-
-    public void disconnect(User user) {
-        repository.findByUsername(user.getUsername()).ifPresent(storedUser -> repository.save(storedUser));
-    }
-
     public List<User> findUsers() {
         return repository.findAll();
     }
