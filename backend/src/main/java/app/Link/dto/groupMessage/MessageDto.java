@@ -1,4 +1,4 @@
-package app.Link.dto.message;
+package app.Link.dto.groupMessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

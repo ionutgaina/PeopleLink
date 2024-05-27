@@ -66,9 +66,7 @@ public class MessageService {
 
         return contact.getMessages().stream().map(
                 m -> new MessageDto(m.getText(),
-                                    m.getUser().getUsername(),
-                                    m.getContact().getSender().getUsername(),
-                                    m.getContact().getReceiver().getUsername())
+                                    m.getUser().getUsername())
         ).toList();
     }
 }
