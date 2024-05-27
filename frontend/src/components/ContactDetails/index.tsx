@@ -23,12 +23,12 @@ export interface ContactDetailsProps {
 function ContactDetails({
   contactDetails,
   onUnfriend,
-  onBlock,
+  // onBlock,
 }: ContactDetailsProps) {
-  const { username, firstName, lastName, email } = contactDetails;
+  const { username } = contactDetails;
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState("");
-  const [type, setType] = useState("Leave");
+  const [type, setType] = useState("Unfriend");
   const { userDetails } = useUser();
 
   const openDialog = (type: string) => {
@@ -50,7 +50,8 @@ function ContactDetails({
         if (type === "Unfriend") {
           onUnfriend(username);
         } else {
-          onBlock(username);
+          // onBlock(username);
+          console.log("Block user");
         }
       }
     } catch (e) {
@@ -63,13 +64,13 @@ function ContactDetails({
       {
         label: "Unfriend",
         icon: <MeetingRoomIcon />,
-        action: () => openDialog("Leave"),
+        action: () => openDialog("Unfriend"),
       },
-      {
-        label: "Block",
-        icon: <DeleteIcon />,
-        action: () => openDialog("Delete"),
-      },
+      // {
+      //   label: "Block",
+      //   icon: <DeleteIcon />,
+      //   action: () => openDialog("Block"),
+      // },
     ];
     return ROOM_OPTIONS.map(({ label, icon, action }, i) => {
       return (
@@ -87,7 +88,6 @@ function ContactDetails({
         <GroupIcon />
       </Avatar>
       <h1>{username}</h1>
-      <p>{firstName + " " + lastName}</p>
       <List>{generateOptions()}</List>
       <ConfirmationDialog
         open={isOpen}

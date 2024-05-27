@@ -27,9 +27,7 @@ export interface RoomPopulated {
 
 export interface ContactPopulated {
 	username: string;
-	firstName: string;
-	lastName: string;
-	email: string;
+	status: string;
 }
 
 export interface UserRoom {

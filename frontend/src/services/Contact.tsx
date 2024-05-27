@@ -1,5 +1,9 @@
 import { instance } from "./utils";
 
+export const getContacts = async (username: string) => {
+  return instance.get(`/contacts/${username}`);
+};
+
 export const addContact = async (sender: string, receiver: string) => {
   return instance.post("/contact/add", {
     sender,
