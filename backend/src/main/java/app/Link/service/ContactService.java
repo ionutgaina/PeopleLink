@@ -8,6 +8,7 @@ import app.Link.model.Contact;
 import app.Link.model.User;
 import app.Link.repository.ContactRepository;
 import app.Link.repository.UserRepository;
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -123,7 +124,8 @@ public class ContactService {
         );
 
         return contactRepository.findBySenderOrReceiver(user, user)
-                .stream().map(
+                .stream()
+                .filter(c -> c.getStatus() != ContactStatus.REJECTED).map(
                         contact -> new ContactSendDto(
                                 contact.getSender().getUsername(),
                                 contact.getReceiver().getUsername(),
