@@ -29,7 +29,7 @@ public class ContactController {
             messagingTemplate.convertAndSendToUser(
                     contact.getReceiver(),
                     "/queue/contacts",
-                    "You have a new friend request from " + contact.getSender()
+                    "sender: " + contact.getSender()
             );
             return ResponseEntity.ok().body("Friend request sent!");
         } catch (Exception e) {
@@ -37,6 +37,7 @@ public class ContactController {
         }
     }
 
+    //   probabil nu e nevoie de asta
     @GetMapping("/pending")
     public ResponseEntity<?> getPendingContacts(@RequestBody UserGetDto user) {
         try {
@@ -51,6 +52,11 @@ public class ContactController {
     public ResponseEntity<?> acceptContact(@RequestBody ContactAddDto contact) {
         try {
             contactService.acceptContact(contact);
+            messagingTemplate.convertAndSendToUser(
+                    contact.getSender(),
+                    "/queue/contacts",
+                    "Friend request accepted by: " + contact.getReceiver()
+            );
             return ResponseEntity.ok().body("Friend request accepted!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -67,6 +73,7 @@ public class ContactController {
         }
     }
 
+//    probabil nu e nevoie de asta
     @GetMapping("/sent")
     public ResponseEntity<?> getSentContacts(@RequestBody UserGetDto user) {
         try {
@@ -97,6 +104,7 @@ public class ContactController {
         }
     }
 
+//    probabil nu e nevoie de asta
     @PostMapping("/block")
     public ResponseEntity<?> blockContact(@RequestBody ContactAddDto contact) {
         try {
@@ -107,6 +115,7 @@ public class ContactController {
         }
     }
 
+//    probabil nu e nevoie de asta
     @PostMapping("/unblock")
     public ResponseEntity<?> unblockContact(@RequestBody ContactAddDto contact) {
         try {
