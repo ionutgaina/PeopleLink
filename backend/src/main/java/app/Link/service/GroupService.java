@@ -18,7 +18,6 @@ import app.Link.repository.GroupMemberRepository;
 import app.Link.repository.GroupRepository;
 import app.Link.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -127,11 +126,11 @@ public class GroupService {
                 () -> new Exception("Group not found")
         );
 
-        User adminUser = userRepository.findByUsername(groupRemoveUserDto.getUsername()).orElseThrow(
+        User adminUser = userRepository.findByUsername(groupRemoveUserDto.getUserName()).orElseThrow(
                 () -> new Exception("Admin user not found")
         );
 
-        User removeUser = userRepository.findByUsername(groupRemoveUserDto.getRemoveUsername()).orElseThrow(
+        User removeUser = userRepository.findByUsername(groupRemoveUserDto.getRemoveUserName()).orElseThrow(
                 () -> new Exception("Remove user not found")
         );
 

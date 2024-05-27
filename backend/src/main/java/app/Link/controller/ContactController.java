@@ -2,7 +2,6 @@ package app.Link.controller;
 
 import app.Link.dto.contact.ContactAddDto;
 import app.Link.dto.contact.ContactSendDto;
-import app.Link.dto.user.UserGetDto;
 import app.Link.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +28,13 @@ public class ContactController {
                     "/queue/contacts",
                     "You have a new friend request from " + contact.getSender()
             );
+
+            messagingTemplate.convertAndSendToUser(
+                    contact.getSender(),
+                    "/queue/contacts",
+                    "You sent a new friend request from " + contact.getReceiver()
+            );
+          
             return ResponseEntity.ok().body("Friend request sent!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -36,10 +42,11 @@ public class ContactController {
     }
 
     //   probabil nu e nevoie de asta
-    @GetMapping("/pending")
-    public ResponseEntity<?> getPendingContacts(@RequestBody UserGetDto user) {
+    @GetMapping("/{username}_pending")
+    @ResponseBody
+    public ResponseEntity<?> getPendingContacts(@PathVariable String username) {
         try {
-            List<ContactAddDto> pendingContacts = contactService.getPendingContacts(user);
+            List<ContactAddDto> pendingContacts = contactService.getPendingContacts(username);
             return ResponseEntity.ok(pendingContacts);
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -55,6 +62,13 @@ public class ContactController {
                     "/queue/contacts",
                     "Friend request accepted by: " + contact.getReceiver()
             );
+
+            messagingTemplate.convertAndSendToUser(
+                    contact.getReceiver(),
+                    "/queue/contacts",
+                    "You accepted friend request by: " + contact.getSender()
+            );
+          
             return ResponseEntity.ok().body("Friend request accepted!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -70,6 +84,13 @@ public class ContactController {
                     "/queue/contacts",
                     "Friend request rejected by: " + contact.getReceiver()
             );
+
+            messagingTemplate.convertAndSendToUser(
+                    contact.getReceiver(),
+                    "/queue/contacts",
+                    "You rejected friend request by: " + contact.getSender()
+            );
+          
             return ResponseEntity.ok().body("Friend request rejected!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -77,10 +98,11 @@ public class ContactController {
     }
 
 //    probabil nu e nevoie de asta
-    @GetMapping("/sent")
-    public ResponseEntity<?> getSentContacts(@RequestBody UserGetDto user) {
+    @GetMapping("/{username}_sent")
+    @ResponseBody
+    public ResponseEntity<?> getSentContacts(@PathVariable String username) {
         try {
-            List<ContactAddDto> sentRequests = contactService.getSentRequests(user);
+            List<ContactAddDto> sentRequests = contactService.getSentRequests(username);
             return ResponseEntity.ok(sentRequests);
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -92,6 +114,19 @@ public class ContactController {
     public ResponseEntity<?> cancelContact(@RequestBody ContactAddDto contact) {
         try {
             contactService.cancelRequest(contact);
+
+            messagingTemplate.convertAndSendToUser(
+                    contact.getReceiver(),
+                    "/queue/contacts",
+                    "Canceled friend request from " + contact.getSender()
+            );
+
+            messagingTemplate.convertAndSendToUser(
+                    contact.getSender(),
+                    "/queue/contacts",
+                    "You canceled friend request to " + contact.getReceiver()
+            );
+
             return ResponseEntity.ok().body("Friend request cancelled!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
