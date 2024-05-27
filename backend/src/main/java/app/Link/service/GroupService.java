@@ -27,7 +27,6 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
-    private final DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
 
     public void createGroup(GroupDto groupDto) throws Exception {
         if (groupRepository.findByName(groupDto.getGroupName()).isPresent()) {
