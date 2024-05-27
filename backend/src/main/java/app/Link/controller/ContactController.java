@@ -34,6 +34,7 @@ public class ContactController {
                     "/queue/contacts",
                     "You sent a new friend request from " + contact.getReceiver()
             );
+          
             return ResponseEntity.ok().body("Friend request sent!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -67,6 +68,7 @@ public class ContactController {
                     "/queue/contacts",
                     "You accepted friend request by: " + contact.getSender()
             );
+          
             return ResponseEntity.ok().body("Friend request accepted!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -88,6 +90,7 @@ public class ContactController {
                     "/queue/contacts",
                     "You rejected friend request by: " + contact.getSender()
             );
+          
             return ResponseEntity.ok().body("Friend request rejected!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -106,6 +109,7 @@ public class ContactController {
         }
     }
 
+    // probabil nu e nevoie de asta
     @PostMapping("/cancel")
     public ResponseEntity<?> cancelContact(@RequestBody ContactAddDto contact) {
         try {
