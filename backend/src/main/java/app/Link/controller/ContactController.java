@@ -5,10 +5,7 @@ import app.Link.dto.user.UserGetDto;
 import app.Link.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,11 +26,7 @@ public class ContactController {
             messagingTemplate.convertAndSendToUser(
                     contact.getReceiver(),
                     "/queue/contacts",
-<<<<<<< HEAD
                     "You have a new friend request from " + contact.getSender()
-=======
-                    "sender: " + contact.getSender()
->>>>>>> 7-authentification-frontend
             );
             return ResponseEntity.ok().body("Friend request sent!");
         } catch (Exception e) {
@@ -71,6 +64,11 @@ public class ContactController {
     public ResponseEntity<?> rejectContact(@RequestBody ContactAddDto contact) {
         try {
             contactService.rejectContact(contact);
+            messagingTemplate.convertAndSendToUser(
+                    contact.getSender(),
+                    "/queue/contacts",
+                    "Friend request rejected by: " + contact.getReceiver()
+            );
             return ResponseEntity.ok().body("Friend request rejected!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -88,6 +86,7 @@ public class ContactController {
         }
     }
 
+    // probabil nu e nevoie de asta
     @PostMapping("/cancel")
     public ResponseEntity<?> cancelContact(@RequestBody ContactAddDto contact) {
         try {

@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class GroupRemoveUserDto {
     private String groupName;
-    private String username;
-    private String removeUsername;
+    private String userName;
+    private String removeUserName;
 }
