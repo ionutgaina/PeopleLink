@@ -21,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class GroupService {
@@ -89,7 +92,7 @@ public class GroupService {
         groupMemberRepository.save(groupMember);
     }
 
-    public void removeGroup(GroupRemoveDto groupRemoveDto) throws Exception {
+    public List<String> removeGroup(GroupRemoveDto groupRemoveDto) throws Exception {
         System.out.println(groupRemoveDto.getGroupName());
         Group group = groupRepository.findByName(groupRemoveDto.getGroupName()).orElseThrow(
                 () -> new Exception("Group not found")
@@ -107,10 +110,16 @@ public class GroupService {
             throw new Exception("Not allowed to remove this group");
         }
 
-        group.getMembers().forEach(groupMember -> System.out.println(groupMember.getUser().getUsername()));
+        List<String> membersToNotify = new ArrayList<>();
+
+        for (GroupMember groupMember : group.getMembers()) {
+            membersToNotify.add(groupMember.getUser().getUsername());
+        }
 
         groupMemberRepository.deleteAll(group.getMembers());
         groupRepository.delete(group);
+
+        return membersToNotify;
     }
 
     public void removeMember(GroupRemoveUserDto groupRemoveUserDto) throws Exception {

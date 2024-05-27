@@ -9,7 +9,10 @@ import app.Link.dto.group.GroupRemoveUserDto;
 import app.Link.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,11 +20,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/groups")
 public class GroupController {
     private final GroupService groupService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/create")
     public ResponseEntity<?> createGroup(@RequestBody GroupDto groupDto) {
         try {
             groupService.createGroup(groupDto);
+            for (String username : groupDto.getMembers()) {
+                messagingTemplate.convertAndSendToUser(
+                        username,
+                        "queue/rooms",
+                        "User " + groupDto.getOwnerName() + " invited you to group " + groupDto.getGroupName()
+                );
+            }
             return ResponseEntity.ok().body("Group created!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -31,7 +42,14 @@ public class GroupController {
     @PostMapping("/remove")
     public ResponseEntity<?> removeGroup(@RequestBody GroupRemoveDto groupRemoveDto) {
         try {
-            groupService.removeGroup(groupRemoveDto);
+            List<String> toNotify = groupService.removeGroup(groupRemoveDto);
+            for (String username : toNotify) {
+                messagingTemplate.convertAndSendToUser(
+                        username,
+                        "queue/rooms",
+                        "Group " + groupRemoveDto.getGroupName() + " has been removed"
+                );
+            }
             return ResponseEntity.ok().body("Group removed!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -42,6 +60,11 @@ public class GroupController {
     public ResponseEntity<?> removeMember(@RequestBody GroupRemoveUserDto groupRemoveDto) {
         try {
             groupService.removeMember(groupRemoveDto);
+            messagingTemplate.convertAndSendToUser(
+                    groupRemoveDto.getRemoveUserName(),
+                    "queue/rooms",
+                    "You have been removed from the group " + groupRemoveDto.getGroupName()
+            );
             return ResponseEntity.ok().body("Member removed!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -52,6 +75,11 @@ public class GroupController {
     public ResponseEntity<?> inviteToGroup(@RequestBody GroupInviteDto groupInviteDto) {
         try {
             groupService.inviteUser(groupInviteDto);
+            messagingTemplate.convertAndSendToUser(
+                    groupInviteDto.getUserName(),
+                    "queue/rooms",
+                    groupInviteDto.getAdminName() + " invited to group " + groupInviteDto.getGroupName()
+            );
             return ResponseEntity.ok().body("User added!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
