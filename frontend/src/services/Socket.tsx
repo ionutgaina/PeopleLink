@@ -15,6 +15,13 @@ export function mySocket(username: string): Client {
       stompClient.subscribe(`/user/${username}/queue/contacts`, function (message) {
         console.log("Received private message: ", JSON.parse(message.body));
       });
+
+      stompClient.subscribe(`/user/${username}/queue/rooms`, function (message) {
+        console.log("Received room message: ", JSON.parse(message.body));
+      });
+
+      // receive my contacts and rooms
+      // and subscribe to their queues
     },
     onDisconnect: (frame) => {
       console.log("Disconnected: " + frame);
