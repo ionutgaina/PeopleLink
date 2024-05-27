@@ -34,6 +34,7 @@ public class ContactController {
                     "/queue/contacts",
                     "You sent a new friend request from " + contact.getReceiver()
             );
+
             return ResponseEntity.ok().body("Friend request sent!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
