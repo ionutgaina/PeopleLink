@@ -32,6 +32,10 @@ public class ContactService {
             throw new Exception("Friend request already sent");
         }
 
+        if (contactRepository.findBySenderAndReceiver(receiver, sender).isPresent()) {
+            throw new Exception("Friend request already sent");
+        }
+
         Contact contact = new Contact();
         contact.setSender(sender);
         contact.setReceiver(receiver);

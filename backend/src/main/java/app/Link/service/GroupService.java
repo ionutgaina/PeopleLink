@@ -18,7 +18,6 @@ import app.Link.repository.GroupMemberRepository;
 import app.Link.repository.GroupRepository;
 import app.Link.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
