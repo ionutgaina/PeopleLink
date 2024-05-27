@@ -2,6 +2,7 @@ package app.Link.service;
 
 import app.Link.common.ContactStatus;
 import app.Link.dto.contact.ContactAddDto;
+import app.Link.dto.contact.ContactSendDto;
 import app.Link.dto.user.UserGetDto;
 import app.Link.model.Contact;
 import app.Link.model.User;
@@ -112,19 +113,17 @@ public class ContactService {
         contactRepository.delete(contact);
     }
 
-    public List<ContactAddDto> getContacts(UserGetDto userDto) throws Exception {
-        User user = userRepository.findByUsername(userDto.getUsername()).orElseThrow(
+    public List<ContactSendDto> getContacts(String username) throws Exception {
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new Exception("User not found")
         );
 
         return contactRepository.findBySenderOrReceiver(user, user)
-                .stream()
-                .filter(
-                        contact -> contact.getStatus() == ContactStatus.ACCEPTED
-                ).map(
-                        contact -> new ContactAddDto(
+                .stream().map(
+                        contact -> new ContactSendDto(
                                 contact.getSender().getUsername(),
-                                contact.getReceiver().getUsername()
+                                contact.getReceiver().getUsername(),
+                                contact.getStatus().toString()
                         )
                 ).toList();
     }

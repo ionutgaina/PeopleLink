@@ -30,7 +30,11 @@ const Room = () => {
     if (currentUser.userDetails.username === "") {
       navigate("/login");
     } else {
-      clientStomp.current = mySocket(currentUser.userDetails.username);
+      clientStomp.current = mySocket({
+        username: currentUser.userDetails.username,
+        setRooms,
+        setUsers,
+      });
     }
 
     return () => {
@@ -42,7 +46,7 @@ const Room = () => {
 
   useEffect(() => {
     setRooms(roomData);
-    setUsers(usersData);
+    // setUsers(usersData);
   }, []);
 
   const getCurrentRoom = () => rooms.find((room) => room.code === roomCode);
@@ -67,62 +71,60 @@ const Room = () => {
     setOpenModal(false);
   };
 
-  return (
-    clientStomp.current ? (
-      <SocketContext.Provider value={clientStomp.current}>
-        <div className="room">
-          <Sidebar
-            onNewRoom={() => setOpenModal(true)}
-            rooms={rooms}
-            users={users.filter(
-              (user) => user.username !== currentUser.userDetails?.username
-            )}
-            onRoomClick={handleRoomClick}
-          />
-          {roomCode ? (
-            <>
-              <Chat roomCode={roomCode} />
-              {users.find((user) => user.username === roomCode) ? (
-                <ContactDetails
-                  contactDetails={getCurrentContact()!}
-                  onUnfriend={() => {
-                    console.log("unfriend");
-                  }}
-                  onBlock={() => {
-                    console.log("block");
-                  }}
-                />
-              ) : (
-                <RoomDetails
-                  roomDetails={getCurrentRoom()!}
-                  onRoomLeave={handleRoomLeave}
-                />
-              )}
-            </>
-          ) : (
-            <div className="chat chat--no-room">
-              <div className="chat__header" />
-              <div className="chat__body">
-                <p className="header__text">
-                  {rooms.length > 0
-                    ? "Click a room to start chatting!"
-                    : "Create or Join a room to start a conversation!"}
-                </p>
-              </div>
-            </div>
+  return clientStomp.current ? (
+    <SocketContext.Provider value={clientStomp.current}>
+      <div className="room">
+        <Sidebar
+          onNewRoom={() => setOpenModal(true)}
+          rooms={rooms}
+          users={users.filter(
+            (user) => user.username !== currentUser.userDetails?.username
           )}
+          onRoomClick={handleRoomClick}
+        />
+        {roomCode ? (
+          <>
+            <Chat roomCode={roomCode} />
+            {users.find((user) => user.username === roomCode) ? (
+              <ContactDetails
+                contactDetails={getCurrentContact()!}
+                onUnfriend={() => {
+                  console.log("unfriend");
+                }}
+                onBlock={() => {
+                  console.log("block");
+                }}
+              />
+            ) : (
+              <RoomDetails
+                roomDetails={getCurrentRoom()!}
+                onRoomLeave={handleRoomLeave}
+              />
+            )}
+          </>
+        ) : (
+          <div className="chat chat--no-room">
+            <div className="chat__header" />
+            <div className="chat__body">
+              <p className="header__text">
+                {rooms.length > 0
+                  ? "Click a room to start chatting!"
+                  : "Create or Join a room to start a conversation!"}
+              </p>
+            </div>
+          </div>
+        )}
 
-          <NewRoom open={openModal} onClose={handleModalClose} />
-          <GeneralSnackbar
-            message={snackbarMsg.current}
-            open={openSnackbar}
-            onClose={() => setOpenSnackbar(false)}
-          />
-        </div>
-      </SocketContext.Provider>
-    ) : (
-      <div>Loading...</div>
-    )
+        <NewRoom open={openModal} onClose={handleModalClose} />
+        <GeneralSnackbar
+          message={snackbarMsg.current}
+          open={openSnackbar}
+          onClose={() => setOpenSnackbar(false)}
+        />
+      </div>
+    </SocketContext.Provider>
+  ) : (
+    <div>Loading...</div>
   );
 };
 

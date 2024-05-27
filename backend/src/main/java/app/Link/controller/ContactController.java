@@ -1,6 +1,7 @@
 package app.Link.controller;
 
 import app.Link.dto.contact.ContactAddDto;
+import app.Link.dto.contact.ContactSendDto;
 import app.Link.dto.user.UserGetDto;
 import app.Link.service.ContactService;
 import lombok.RequiredArgsConstructor;
@@ -97,15 +98,17 @@ public class ContactController {
         }
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getContacts(@RequestBody UserGetDto user) {
+    @GetMapping("/{username}")
+    @ResponseBody
+    public ResponseEntity<?> getContacts(@PathVariable String username) {
         try {
-            List<ContactAddDto> contacts = contactService.getContacts(user);
+            List<ContactSendDto> contacts = contactService.getContacts(username);
             return ResponseEntity.ok(contacts);
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
     }
+
 
 //    probabil nu e nevoie de asta
     @PostMapping("/block")
