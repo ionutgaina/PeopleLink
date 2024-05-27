@@ -127,11 +127,11 @@ public class GroupService {
                 () -> new Exception("Group not found")
         );
 
-        User adminUser = userRepository.findByUsername(groupRemoveUserDto.getUsername()).orElseThrow(
+        User adminUser = userRepository.findByUsername(groupRemoveUserDto.getUserName()).orElseThrow(
                 () -> new Exception("Admin user not found")
         );
 
-        User removeUser = userRepository.findByUsername(groupRemoveUserDto.getRemoveUsername()).orElseThrow(
+        User removeUser = userRepository.findByUsername(groupRemoveUserDto.getRemoveUserName()).orElseThrow(
                 () -> new Exception("Remove user not found")
         );
 

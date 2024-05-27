@@ -68,8 +68,8 @@ public class ContactService {
         contactRepository.save(contact);
     }
 
-    public List<ContactAddDto> getPendingContacts(UserGetDto user) throws Exception {
-        User receiver = userRepository.findByUsername(user.getUsername()).orElseThrow(
+    public List<ContactAddDto> getPendingContacts(String user) throws Exception {
+        User receiver = userRepository.findByUsername(user).orElseThrow(
                 () -> new Exception("User not found")
         );
 
@@ -84,8 +84,8 @@ public class ContactService {
                 .toList();
     }
 
-    public List<ContactAddDto> getSentRequests(UserGetDto user) throws Exception {
-        User sender = userRepository.findByUsername(user.getUsername()).orElseThrow(
+    public List<ContactAddDto> getSentRequests(String user) throws Exception {
+        User sender = userRepository.findByUsername(user).orElseThrow(
                 () -> new Exception("User not found")
         );
 

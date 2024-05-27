@@ -33,7 +33,7 @@ public class GroupMessageController {
         }
     }
 
-    @GetMapping("/getGroup")
+    @PostMapping("/getGroup")
     public ResponseEntity<?> getContact(@RequestBody GroupMemberDto groupMemberDto) {
         try {
             List<MessageDto> messageList = groupMessageService.getGroupMessages(groupMemberDto);
