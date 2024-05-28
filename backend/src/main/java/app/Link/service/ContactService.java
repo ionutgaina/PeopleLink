@@ -2,6 +2,7 @@ package app.Link.service;
 
 import app.Link.common.ContactStatus;
 import app.Link.dto.contact.ContactAddDto;
+import app.Link.dto.contact.ContactGetDto;
 import app.Link.dto.contact.ContactSendDto;
 import app.Link.dto.user.UserGetDto;
 import app.Link.model.Contact;
@@ -118,7 +119,7 @@ public class ContactService {
         contactRepository.delete(contact);
     }
 
-    public List<ContactSendDto> getContacts(String username) throws Exception {
+    public List<ContactGetDto> getContacts(String username) throws Exception {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new Exception("User not found")
         );
@@ -126,12 +127,21 @@ public class ContactService {
         return contactRepository.findBySenderOrReceiver(user, user)
                 .stream()
                 .filter(c -> c.getStatus() != ContactStatus.REJECTED).map(
-                        contact -> new ContactSendDto(
+                        contact -> new ContactGetDto(
                                 contact.getSender().getUsername(),
                                 contact.getReceiver().getUsername(),
-                                contact.getStatus().toString()
+                                contact.getStatus().toString(),
+                                contactCode(contact)
                         )
                 ).toList();
+    }
+
+    private String contactCode(Contact contact) {
+        if (contact.getSender().getUsername().compareTo(contact.getReceiver().getUsername()) < 0) {
+            return contact.getSender().getUsername() + "_" + contact.getReceiver().getUsername();
+        }
+
+        return contact.getReceiver().getUsername() + "_" + contact.getSender().getUsername();
     }
 
     public void blockContact(ContactAddDto contactToBlock) throws Exception {

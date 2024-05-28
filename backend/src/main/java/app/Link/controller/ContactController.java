@@ -1,6 +1,7 @@
 package app.Link.controller;
 
 import app.Link.dto.contact.ContactAddDto;
+import app.Link.dto.contact.ContactGetDto;
 import app.Link.dto.contact.ContactSendDto;
 import app.Link.service.ContactService;
 import lombok.RequiredArgsConstructor;
@@ -136,7 +137,7 @@ public class ContactController {
     @ResponseBody
     public ResponseEntity<?> getContacts(@PathVariable String username) {
         try {
-            List<ContactSendDto> contacts = contactService.getContacts(username);
+            List<ContactGetDto> contacts = contactService.getContacts(username);
             return ResponseEntity.ok(contacts);
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
