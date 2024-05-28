@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 public class S3Service {
 
     private final S3Client s3Client;
+
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -35,7 +35,7 @@ public class S3Service {
         s3Client.putObject(putObjectRequest, Paths.get(filePath));
     }
 
-    public String upload(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file) throws IOException {
         String fileName = LocalDateTime.now().toString();
 
         s3Client.putObject(PutObjectRequest.builder()
@@ -44,7 +44,6 @@ public class S3Service {
                             .build(),
                 software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes()));
         return generatePresignedUrl(fileName).toString();
-
     }
 
     public URL generatePresignedUrl(String key) {

@@ -9,4 +9,5 @@ public class MessageSendDto {
     private String text;
     private String senderName;
     private String roomCode;
+    private String mediaUrl;
 }

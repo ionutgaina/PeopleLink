@@ -13,9 +13,9 @@ public class S3Config {
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
-                .region(Region.of("your_aws_region")) // e.g., Region.US_EAST_1
+                .region(Region.of("EUCentral1")) // e.g., Region.US_EAST_1
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create("your_access_key_id", "your_secret_access_key")))
+                        AwsBasicCredentials.create("AKIAVRUVSCGRZNY6A65P", "e8yHY2xJAP0p+KxVKjHJw2LPTCx6fQwL4qQFdts2")))
                 .build();
     }
 }

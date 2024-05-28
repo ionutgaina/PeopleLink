@@ -8,10 +8,12 @@ import app.Link.dto.message.MessageGetDto;
 import app.Link.dto.message.MessageSendDto;
 import app.Link.service.GroupMessageService;
 import app.Link.service.MessageService;
+import app.Link.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class MessageController {
     private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
     private final GroupMessageService groupMessageService;
+    private final S3Service s3Service;
 
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestBody MessageSendDto message) {
@@ -46,6 +49,35 @@ public class MessageController {
                         message.getSenderName() + " sent a message in " + message.getRoomCode()
                 );
             }
+
+            return ResponseEntity.ok().body("Message sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> sendMessage(@RequestParam("text") String text,
+                                         @RequestParam("senderName") String senderName,
+                                         @RequestParam("roomCode") String roomCode,
+                                         @RequestParam(value = "file", required = false) MultipartFile file) {
+        try {
+            // Creează DTO-ul MessageSendDto
+            String fileUrl = null;
+            // Procesează atașamentul dacă există
+            if (file != null && !file.isEmpty()) {
+                fileUrl = s3Service.uploadFile(file); // Implementați metoda uploadFile în MessageService
+//
+            }
+            MessageSendDto message = new MessageSendDto(text, senderName, roomCode, fileUrl);
+            
+            messageService.sendMessage(message);
+
+            String destTopic = "/contacts/" + message.getRoomCode();
+
+            messagingTemplate.convertAndSend(
+                    destTopic,
+                    message.getSenderName() + " sent you a direct message"
+            );
 
             return ResponseEntity.ok().body("Message sent successfully");
         } catch (Exception e) {
