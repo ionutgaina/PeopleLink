@@ -39,7 +39,7 @@ const Chat = ({ roomCode }: ChatProps) => {
     };
 
     if (socket) {
-      socket.subscribe(`/contacts/${roomCode}`, (message) => {
+      socket.subscribe(`/messages/${roomCode}`, (message) => {
         const messages = JSON.parse(message.body);
         setMessages(messages);
       });
@@ -49,7 +49,7 @@ const Chat = ({ roomCode }: ChatProps) => {
 
     return () => {
       if (socket) {
-        socket.unsubscribe(`/contacts/${roomCode}`);
+        socket.unsubscribe(`/messages/${roomCode}`);
       }
     };
   }, [socket, roomCode, userDetails.username]);

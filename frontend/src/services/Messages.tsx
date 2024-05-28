@@ -1,7 +1,7 @@
 import { instance } from "./utils";
 
 export const getMessages = async (roomCode: string, userName: string) => {
-  const response = await instance.post(`/messages`, {
+  const response = await instance.post(`/messages/send`, {
     roomCode,
     userName,
   });
@@ -19,7 +19,7 @@ export const sendMessage = async (
   senderName: string,
   text: string
 ) => {
-  return instance.post(`/messages`, {
+  return instance.post(`/messages/get`, {
     roomCode,
     senderName,
     text,
