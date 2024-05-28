@@ -71,6 +71,16 @@ const Room = () => {
     setOpenModal(false);
   };
 
+  if (
+    !(
+      users.find((user) => user.roomCode === roomCode) ||
+      rooms.find((room) => room.code === roomCode)
+    ) &&
+    roomCode !== ""
+  ) {
+    setRoomCode("");
+  }
+
   return clientStomp.current ? (
     <SocketContext.Provider value={clientStomp.current}>
       <DataContext.Provider
@@ -85,8 +95,7 @@ const Room = () => {
             )}
             onRoomClick={handleRoomClick}
           />
-          {users.find((user) => user.roomCode === roomCode) ||
-          rooms.find((room) => room.code === roomCode) ? (
+          {roomCode ? (
             <>
               {users.find((user) => user.roomCode === roomCode) ? (
                 <>
