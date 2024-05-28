@@ -18,4 +18,6 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
     List<Contact> findBySenderAndStatus(User sender, ContactStatus contactStatus);
 
     List<Contact> findBySenderOrReceiver(User sender, User receiver);
+
+    Optional<Contact> findByRoomCode(String roomCode);
 }

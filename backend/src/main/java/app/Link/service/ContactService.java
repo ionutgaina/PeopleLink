@@ -38,6 +38,7 @@ public class ContactService {
         Contact contact = new Contact();
         contact.setSender(sender);
         contact.setReceiver(receiver);
+        contact.setRoomCode(sender.getUsername() + "_" + receiver.getUsername());
         contactRepository.save(contact);
     }
 
