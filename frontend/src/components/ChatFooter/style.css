@@ -1,4 +1,5 @@
 .chat__footer {
+	position: relative;
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: space-between;
@@ -6,21 +7,48 @@
 	height: 3.5rem;
 	border-top: 1px solid #cecece;
 	background-color: #fff;
-}
-.chat__footer > form {
+  }
+  
+  .chat__footer > form {
 	flex: 1;
 	display: flex;
 	margin-left: 0.5rem;
-}
-.chat__footer > form > input {
+  }
+  
+  .chat__footer > form > input {
 	flex: 1;
-}
-.chat__footer > form > button {
+  }
+  
+  .chat__footer > form > button {
 	display: none;
-}
-.chat__footer > .MuiButtonBase-root {
+  }
+  
+  .chat__footer > .MuiButtonBase-root {
 	margin: -0.25rem 0.25rem 0;
-}
-.chat__footer .MuiButtonBase-root .MuiSvgIcon-root {
+  }
+  
+  .chat__footer .MuiButtonBase-root .MuiSvgIcon-root {
 	transform: rotate(-45deg);
-}
+  }
+  
+  .file-preview {
+	position: absolute;
+	bottom: 100%;
+	left: 5px;
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+	text-align: center;
+  }
+  
+  .preview-image {
+	height: auto;
+	width: 200px;
+	border-radius: 5px;
+  }
+  
+  .close-button {
+	transform: rotate(45deg);
+	margin-left: 10px;
+  }
+  
