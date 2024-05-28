@@ -46,9 +46,11 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
       setContent(
         "This action is irreversible. All messages and media shared in this room will be deleted."
       );
-    } else if (type === "Invite") {
-      setIsInviteModalOpen(true);
     }
+  };
+
+  const openInviteModal = () => {
+    setIsInviteModalOpen(true);
   };
 
   const handleModalClose = async (willProceed: boolean) => {
@@ -129,7 +131,7 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
         label: "Invite User",
         icon: <PersonIcon />,
         adminOnly: true,
-        action: () => openDialog("Invite"),
+        action: () => openInviteModal(),
       },
     ];
     return ROOM_OPTIONS.map(({ label, icon, adminOnly, action }, i) => {
@@ -173,7 +175,10 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
         onClose={handleModalClose}
         content={content}
       />
-      <InviteUserModal open={isInviteModalOpen} onClose={handleInviteModalClose} />
+      <InviteUserModal
+        open={isInviteModalOpen}
+        onClose={handleInviteModalClose}
+      />
     </div>
   );
 }
