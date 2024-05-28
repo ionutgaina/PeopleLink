@@ -1,10 +1,9 @@
 package app.Link.service;
 
 import app.Link.dto.groupMember.GroupMemberDto;
-import app.Link.dto.groupMessage.MessageSendDto;
-import app.Link.dto.groupMessage.MessageDto;
+import app.Link.dto.groupMessage.GroupMessageSendDto;
+import app.Link.dto.groupMessage.GroupMessageDto;
 import app.Link.model.Group;
-import app.Link.model.GroupMember;
 import app.Link.model.GroupMessage;
 import app.Link.model.User;
 import app.Link.repository.GroupMemberRepository;
@@ -14,7 +13,6 @@ import app.Link.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,7 +23,7 @@ public class GroupMessageService {
     private final UserRepository userRepository;
     private final GroupMemberRepository groupMemberRepository;
 
-    public void sendMessage(MessageSendDto messageDto) throws Exception {
+    public void sendMessage(GroupMessageSendDto messageDto) throws Exception {
         Group group = groupRepository.findByName(messageDto.getGroupName()).orElseThrow(
                 () -> new Exception("Group not found")
         );
@@ -47,7 +45,7 @@ public class GroupMessageService {
     }
 
 
-    public List<MessageDto> getGroupMessages(GroupMemberDto groupMemberDto) throws Exception {
+    public List<GroupMessageDto> getGroupMessages(GroupMemberDto groupMemberDto) throws Exception {
         Group group = groupRepository.findByName(groupMemberDto.getGroupName()).orElseThrow(
                 () -> new Exception("Group not found")
         );
@@ -60,7 +58,7 @@ public class GroupMessageService {
             throw new Exception("User not in group");
 
         return group.getMessages().stream().map(
-                m -> new MessageDto(m.getText(), m.getSender().getUsername(), m.getTimestamp())
+                m -> new GroupMessageDto(m.getText(), m.getSender().getUsername(), m.getTimestamp())
         ).toList();
     }
 }
