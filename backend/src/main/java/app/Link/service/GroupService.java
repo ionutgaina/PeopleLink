@@ -224,4 +224,8 @@ public class GroupService {
 
         return new GroupDto(admin, group.getName(), group.getDescription(), members);
     }
+
+    public void joinGroup(GroupJoinDto groupJoinDto) throws Exception {
+        addUser(new GroupMemberDto(groupJoinDto.getGroupName(), groupJoinDto.getUserName(), MemberRole.MEMBER));
+    }
 }

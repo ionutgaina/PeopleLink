@@ -106,6 +106,16 @@ public class GroupController {
         }
     }
 
+    @PostMapping("/join")
+    public ResponseEntity<?> leaveGroup(@RequestBody GroupJoinDto groupJoinDto) {
+        try {
+            groupService.joinGroup(groupJoinDto);
+            return ResponseEntity.ok().body("Group joined!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
     @GetMapping("{groupName}")
     public ResponseEntity<?> getGroup(@PathVariable String groupName) {
         try {
