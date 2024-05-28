@@ -29,9 +29,10 @@ export const createGroup = async (
   });
 };
 
-export const joinRoom = async (username: string, roomCode: string) => {
-  return instance.post(`/groups/join/${roomCode}`, {
-    username,
+export const joinRoom = async (userName: string, roomCode: string) => {
+  return instance.post(`/groups/join`, {
+    userName,
+    groupName: roomCode,
   });
 };
 
@@ -48,3 +49,11 @@ export const deleteRoom = async (adminName: string, groupName: string) => {
     groupName,
   });
 };
+
+export const inviteUser = async (adminName: string, groupName: string, userName: string) => {
+  return instance.post(`/groups/invite`, {
+    adminName,
+    groupName,
+    userName,
+  });
+}

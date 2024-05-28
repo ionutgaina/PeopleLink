@@ -24,35 +24,6 @@ public class MessageController {
     private final SimpMessagingTemplate messagingTemplate;
     private final GroupMessageService groupMessageService;
 
-    @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestBody MessageSendDto message) {
-        String destTopic = "/rooms/" + message.getRoomCode();
-        try {
-            if (message.getRoomCode().contains(message.getSenderName())) {
-                messageService.sendMessage(message);
-                messagingTemplate.convertAndSend(
-                        destTopic,
-                        message.getSenderName() + "sent you a message"
-                );
-            } else {
-                GroupMessageSendDto groupMessageDto = new GroupMessageSendDto(
-                        message.getText(),
-                        message.getSenderName(),
-                        message.getRoomCode()
-                );
-                groupMessageService.sendMessage(groupMessageDto);
-                messagingTemplate.convertAndSend(
-                        destTopic,
-                        message.getSenderName() + " sent a message in " + message.getRoomCode()
-                );
-            }
-
-            return ResponseEntity.ok().body("Message sent successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
-    }
-
     @PostMapping("/")
     public ResponseEntity<?> getContactMessages(@RequestBody MessageGetDto messageGetDto) {
         try {
@@ -67,6 +38,35 @@ public class MessageController {
                 List<GroupMessageDto> groupMessageList = groupMessageService.getGroupMessages(groupMemberDto);
                 return ResponseEntity.ok().body(groupMessageList);
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<?> sendMessage(@RequestBody MessageSendDto message) {
+        String destTopic = "/rooms/" + message.getRoomCode();
+        try {
+            if (message.getRoomCode().contains(message.getSenderName())) {
+                messageService.sendMessage(message);
+                messagingTemplate.convertAndSend(
+                        destTopic,
+                        message.getSenderName() + "sent you a message"
+                );
+            } else {
+                GroupMessageSendDto groupMessageDto = new GroupMessageSendDto(
+                        message.getSenderName(),
+                        message.getText(),
+                        message.getRoomCode()
+                );
+                groupMessageService.sendMessage(groupMessageDto);
+                messagingTemplate.convertAndSend(
+                        destTopic,
+                        message.getSenderName() + " sent a message in " + message.getRoomCode()
+                );
+            }
+
+            return ResponseEntity.ok().body("Message sent successfully");
         } catch (Exception e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }

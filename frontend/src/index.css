@@ -40,3 +40,7 @@ h6,
 .header__text {
 	font-weight: 800;
 }
+
+.chat__scrollbar{
+	overflow-x: hidden;
+}

@@ -21,17 +21,19 @@ import {
 import Swal from "sweetalert2";
 import { AxiosResponse } from "axios";
 import { th } from "date-fns/locale";
+import { useSocket } from "../../context/SocketContext";
 
 export interface ContactDetailsProps {
   contactDetails: ContactPopulated;
 }
 
 function ContactDetails({ contactDetails }: ContactDetailsProps) {
-  const { username, status, sender } = contactDetails;
+  const { username, status, sender, roomCode } = contactDetails;
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState("");
   const [type, setType] = useState("Unfriend");
   const { userDetails } = useUser();
+  const socket = useSocket();
 
   const openDialog = (type: string) => {
     setIsOpen(true);
@@ -60,8 +62,14 @@ function ContactDetails({ contactDetails }: ContactDetailsProps) {
           response = await acceptContact(sender, userDetails.username);
         } else if (type === "Decline") {
           response = await rejectContact(sender, userDetails.username);
+          if (socket) {
+            socket.unsubscribe(`chat`);
+          }
         } else if (type === "Cancel") {
           response = await cancelContact(sender, username);
+          if (socket) {
+            socket.unsubscribe(`chat`);
+          }
         } else {
           throw new Error("Invalid action");
         }

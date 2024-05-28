@@ -117,6 +117,11 @@ public class GroupController {
                         "User " + groupLeaveDto.getUserName() + " has left the group"
                 );
             }
+            messagingTemplate.convertAndSendToUser(
+                    groupLeaveDto.getUserName(),
+                    "queue/rooms",
+                    "You have left the group " + groupLeaveDto.getGroupName()
+            );
             return ResponseEntity.ok().body("Left group!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -124,7 +129,7 @@ public class GroupController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> leaveGroup(@RequestBody GroupJoinDto groupJoinDto) {
+    public ResponseEntity<?> joinGroup(@RequestBody GroupJoinDto groupJoinDto) {
         try {
             groupService.joinGroup(groupJoinDto);
             List<String> toNotify = groupService.getGroup(groupJoinDto.getGroupName()).getMembers();

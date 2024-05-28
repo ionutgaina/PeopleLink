@@ -1,6 +1,6 @@
 import { Avatar } from "@mui/material";
 import { useState, useEffect, useCallback } from "react";
-import { Scrollbars } from 'react-custom-scrollbars-2';
+import { Scrollbars } from "react-custom-scrollbars-2";
 import "./style.css";
 import { MessagePopulated } from "../../types";
 import {
@@ -9,12 +9,11 @@ import {
   format,
   formatDistanceToNow,
 } from "date-fns";
-import PersonIcon from "@mui/icons-material/Person";
 import { useUser } from "../../context/UserContext";
 import ChatHeader from "../ChatHeader";
 import ChatFooter from "../ChatFooter";
-import { messageData } from "../../constants";
-import { useData } from "../../context/DataContext";
+import { getMessages } from "../../services/Messages";
+import { useSocket } from "../../context/SocketContext";
 
 export interface ChatProps {
   roomCode: string;
@@ -23,15 +22,40 @@ export interface ChatProps {
 const Chat = ({ roomCode }: ChatProps) => {
   const [messages, setMessages] = useState([] as MessagePopulated[]);
   const { userDetails } = useUser();
+  const socket = useSocket();
   const setRef = useCallback((node: HTMLElement | null) => {
     if (node) {
-      node.scrollIntoView({ behavior: 'smooth' });
+      node.scrollIntoView({ behavior: "smooth" });
     }
   }, []);
 
   useEffect(() => {
-    setMessages(messageData.filter((msg) => msg.roomCode === roomCode));
-  }, [roomCode]);
+    const fetchData = async () => {
+      const messages = await getMessages(roomCode, userDetails.username);
+      setMessages(messages);
+    };
+
+    if (socket) {
+      socket.subscribe(`/rooms/${roomCode}`, async (message) => {
+        console.log("Message received: ", message);
+        try {
+          const messages = await getMessages(roomCode, userDetails.username);
+          console.log("Messages: ", messages);
+          setMessages(messages);
+        } catch (error) {
+          // console.log("Error: ", error);
+        }
+      }, { id : "chat"});
+    }
+
+    fetchData();
+
+    return () => {
+      if (socket) {
+        socket.unsubscribe("chat");
+      }
+    };
+  }, [socket, roomCode, userDetails.username]);
 
   const formatDate = (date: Date) => {
     return differenceInCalendarDays(new Date(), date) > 2
@@ -46,29 +70,31 @@ const Chat = ({ roomCode }: ChatProps) => {
         messages={messages}
         formatDate={formatDate}
       />
-      <div className="chat__body">
+      <div
+        className="chat__body"
+        style={{
+          paddingTop: "10px",
+        }}
+      >
         <Scrollbars className="chat__scrollbar">
           <div className="chat__main">
-            {messages.map(({ content, user, createdAt }, i) => {
+            {messages.map(({ content, user, createdAt }: any, i) => {
               const lastMessage = messages.length - 1 === i;
               return (
                 <div
                   className={`chat__block ${
-                    userDetails.username === user.username &&
-                    "chat__block--sender"
-                  } ${user.username === "Chatbot" && "chat__block--bot"}`}
+                    userDetails.username === user && "chat__block--sender"
+                  }`}
                   key={i}
                 >
                   <div className="message__block">
-                    <Avatar>{user.username.charAt(0)}</Avatar>
+                    <Avatar>{user.charAt(0)}</Avatar>
                     <p
                       ref={lastMessage ? setRef : null}
                       className="chat__message"
                     >
                       <span className="header__text chat__person">
-                        {userDetails.username === user.username
-                          ? "You"
-                          : user.username}
+                        {userDetails.username === user ? "You" : user}
                       </span>
                       {content}
                     </p>

@@ -22,7 +22,8 @@
 	font-size: small;
 	display: block;
 	margin-bottom: 0.25rem;
-	font-weight: 600;
+	font-weight: 800;
+	text-decoration: underline;
 	letter-spacing: 0.03rem;
 }
 .chat__message {
