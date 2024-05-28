@@ -10,6 +10,7 @@ import app.Link.service.GroupMessageService;
 import app.Link.service.MessageService;
 import app.Link.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class MessageController {
     public ResponseEntity<?> sendMessage(@RequestBody MessageSendDto message) {
         String destTopic = "/rooms/" + message.getRoomCode();
         try {
+
             if (!message.getRoomCode().contains(message.getSenderName())) {
                 messageService.sendMessage(message);
                 messagingTemplate.convertAndSend(
@@ -56,20 +58,21 @@ public class MessageController {
         }
     }
 
-    public ResponseEntity<?> sendMessage(@RequestParam("text") String text,
-                                         @RequestParam("senderName") String senderName,
-                                         @RequestParam("roomCode") String roomCode,
-                                         @RequestParam(value = "file", required = false) MultipartFile file) {
+    @PostMapping(value="/sendFile")
+    public ResponseEntity<?> sendMessage(
+                                         @RequestParam("file") MultipartFile file) {
         try {
             // Creează DTO-ul MessageSendDto
             String fileUrl = null;
+            System.out.println(file);
             // Procesează atașamentul dacă există
             if (file != null && !file.isEmpty()) {
+                System.out.println("File received");
                 fileUrl = s3Service.uploadFile(file); // Implementați metoda uploadFile în MessageService
-//
+                System.out.println(fileUrl);
             }
-            MessageSendDto message = new MessageSendDto(text, senderName, roomCode, fileUrl);
-            
+            MessageSendDto message = new MessageSendDto("text", "senderName", "roomCode", fileUrl);
+
             messageService.sendMessage(message);
 
             String destTopic = "/contacts/" + message.getRoomCode();

@@ -41,8 +41,10 @@ public class S3Service {
         s3Client.putObject(PutObjectRequest.builder()
                             .bucket(bucketName)
                             .key(fileName)
+                            .contentType("image/png")
                             .build(),
                 software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes()));
+        System.out.println(file.getName());
         return generatePresignedUrl(fileName).toString();
     }
 
