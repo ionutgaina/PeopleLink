@@ -24,13 +24,25 @@ export function mySocket({ username, setRooms, setUsers }: mySocketProps) {
         `/user/${username}/queue/contacts`,
         async function (message) {
           console.log("Received private message: ", JSON.parse(message.body));
+          let users: ContactPopulated[] = [];
           try {
-            const users = await getContacts(username);
+            users = await getContacts(username);
             if (users) setUsers(users);
             else setUsers([]);
           } catch (e: any) {
             setUsers([]);
+            users = [];
           }
+          // unsubscribe from all previous contacts
+          
+          users.forEach((user) => {
+            stompClient.subscribe(
+              `/contacts/${user.roomCode}`,
+              function (message) {
+                console.log("Received message: ", JSON.parse(message.body));
+              }
+            );
+          });
         }
       );
 
@@ -38,31 +50,55 @@ export function mySocket({ username, setRooms, setUsers }: mySocketProps) {
         `/user/${username}/queue/rooms`,
         async function (message) {
           console.log("Received room message: ", JSON.parse(message.body));
+          let rooms: RoomPopulated[] = [];
           try {
-            const rooms = await getGroups(username);
+            rooms = await getGroups(username);
             if (rooms) setRooms(rooms);
             else setRooms([]);
           } catch (e: any) {
             setRooms([]);
+            rooms = [];
           }
+
+          rooms.forEach((room) => {
+            stompClient.subscribe(`/groups/${room.code}`, function (message) {
+              console.log("Received message: ", JSON.parse(message.body));
+            });
+          });
         }
       );
 
+      let users: ContactPopulated[] = [];
       try {
-        const users = await getContacts(username);
+        users = await getContacts(username);
         if (users) setUsers(users);
         else setUsers([]);
       } catch (e: any) {
         setUsers([]);
+        users = [];
       }
 
+      users.forEach((user) => {
+        stompClient.subscribe(`/contacts/${user.roomCode}`, function (message) {
+          console.log("Received message: ", JSON.parse(message.body));
+        });
+      });
+
+      let rooms: RoomPopulated[] = [];
       try {
-        const rooms = await getGroups(username);
+        rooms = await getGroups(username);
         if (rooms) setRooms(rooms);
         else setRooms([]);
       } catch (e: any) {
         setRooms([]);
+        rooms = [];
       }
+
+      rooms.forEach((room) => {
+        stompClient.subscribe(`/groups/${room.code}`, function (message) {
+          console.log("Received message: ", JSON.parse(message.body));
+        });
+      });
     },
     onDisconnect: (frame) => {
       console.log("Disconnected: " + frame);
