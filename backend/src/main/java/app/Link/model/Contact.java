@@ -33,4 +33,7 @@ public class Contact {
 
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL)
     private List<Message> messages = new ArrayList<>();
+
+    @Column(name = "room_code")
+    private String roomCode;
 }
