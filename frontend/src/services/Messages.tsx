@@ -25,3 +25,14 @@ export const sendMessage = async (
     text,
   });
 };
+
+export const sendFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return instance.post(`/messages/sendFile`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};

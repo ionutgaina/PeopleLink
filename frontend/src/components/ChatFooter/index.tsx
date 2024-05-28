@@ -5,7 +5,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import { User } from "../../types";
 import "./style.css";
-import { sendMessage } from "../../services/Messages";
+import { sendFile, sendMessage } from "../../services/Messages";
 import Swal from "sweetalert2";
 
 export interface ChatFooterProps {
@@ -24,6 +24,10 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
     e.preventDefault();
     if (input || file) {
       try {
+        if (file) {
+          await sendFile(file);
+        }
+
         await sendMessage(roomCode, loggedInUser.username, input);
       } catch (error: any) {
         console.error("Error sending message: ", error);
