@@ -60,11 +60,23 @@ public class GroupController {
     public ResponseEntity<?> removeMember(@RequestBody GroupRemoveUserDto groupRemoveDto) {
         try {
             groupService.removeMember(groupRemoveDto);
-            messagingTemplate.convertAndSendToUser(
-                    groupRemoveDto.getRemoveUserName(),
-                    "queue/rooms",
-                    "You have been removed from the group " + groupRemoveDto.getGroupName()
-            );
+            List<String> toNotify = groupService.getGroup(groupRemoveDto.getGroupName()).getMembers();
+            for (String username : toNotify) {
+                if (username.equals(groupRemoveDto.getRemoveUserName())) {
+                    messagingTemplate.convertAndSendToUser(
+                            username,
+                            "queue/rooms",
+                            "You have been removed from the group " + groupRemoveDto.getGroupName()
+                    );
+                } else {
+                    messagingTemplate.convertAndSendToUser(
+                            username,
+                            "queue/rooms",
+                            "User " + groupRemoveDto.getRemoveUserName() + " has been removed from group " + groupRemoveDto.getGroupName()
+                    );
+                }
+            }
+
             return ResponseEntity.ok().body("Member removed!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -78,7 +90,7 @@ public class GroupController {
             messagingTemplate.convertAndSendToUser(
                     groupInviteDto.getUserName(),
                     "queue/rooms",
-                    groupInviteDto.getAdminName() + " invited to group " + groupInviteDto.getGroupName()
+                    groupInviteDto.getAdminName() + " invited you to group " + groupInviteDto.getGroupName()
             );
             return ResponseEntity.ok().body("User added!");
         } catch (Exception e) {
@@ -100,6 +112,14 @@ public class GroupController {
     public ResponseEntity<?> leaveGroup(@RequestBody GroupLeaveDto groupLeaveDto) {
         try {
             groupService.leaveGroup(groupLeaveDto);
+            List<String> toNotify = groupService.getGroup(groupLeaveDto.getGroupName()).getMembers();
+            for (String member : toNotify) {
+                messagingTemplate.convertAndSendToUser(
+                        member,
+                        "queue/rooms",
+                        "User " + groupLeaveDto.getUserName() + " has left the group"
+                );
+            }
             return ResponseEntity.ok().body("Left group!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
@@ -110,6 +130,14 @@ public class GroupController {
     public ResponseEntity<?> leaveGroup(@RequestBody GroupJoinDto groupJoinDto) {
         try {
             groupService.joinGroup(groupJoinDto);
+            List<String> toNotify = groupService.getGroup(groupJoinDto.getGroupName()).getMembers();
+            for (String username : toNotify) {
+                messagingTemplate.convertAndSendToUser(
+                        username,
+                        "queue/rooms",
+                        "User " + groupJoinDto.getUserName() + " has joined the group"
+                );
+            }
             return ResponseEntity.ok().body("Group joined!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
