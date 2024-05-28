@@ -17,7 +17,7 @@ const SidebarContact = ({
 }: SidebarRoomProps) => {
   console.log("userDetails", userDetails);
   return (
-    <div className="sidebarRoom" onClick={() => onRoomClick(user.username)}>
+    <div className="sidebarRoom" onClick={() => onRoomClick(user.roomCode)}>
       <Avatar>
         <GroupIcon />
       </Avatar>

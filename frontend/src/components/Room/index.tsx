@@ -52,7 +52,7 @@ const Room = () => {
   const getCurrentRoom = () => rooms.find((room) => room.code === roomCode);
 
   const getCurrentContact = () =>
-    users.find((user) => user.username === roomCode);
+    users.find((user) => user.roomCode === roomCode);
 
   const handleRoomClick = (code: string) => {
     setRoomCode(code);
@@ -85,7 +85,7 @@ const Room = () => {
           />
           {roomCode ? (
             <>
-              {users.find((user) => user.username === roomCode) ? (
+              {users.find((user) => user.roomCode === roomCode) ? (
                 <>
                   {users.find((user) => user.username === roomCode)?.status ===
                   "PENDING" ? (
