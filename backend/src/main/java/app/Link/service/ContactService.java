@@ -67,8 +67,8 @@ public class ContactService {
 
         Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver).orElseThrow(
                 () -> new Exception("Contact not found"));
-        contact.setStatus(ContactStatus.REJECTED);
-        contactRepository.save(contact);
+
+        contactRepository.delete(contact);
     }
 
     public List<ContactAddDto> getPendingContacts(String user) throws Exception {

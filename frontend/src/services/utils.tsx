@@ -8,7 +8,7 @@ export const instance = axios.create({
 });
 
 export const getRoomUsers = async (sender: string, receiver: string) => {
-  const roomcode = [sender, receiver].sort().join("");
+  const roomcode = [sender, receiver].sort().join("_");
   console.log(roomcode);
   return roomcode;
 };

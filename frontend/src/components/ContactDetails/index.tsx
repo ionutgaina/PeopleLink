@@ -13,19 +13,21 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import GroupIcon from "@mui/icons-material/Group";
 import { ContactPopulated } from "../../types";
+import {
+  acceptContact,
+  cancelContact,
+  rejectContact,
+} from "../../services/Contact";
+import Swal from "sweetalert2";
+import { AxiosResponse } from "axios";
+import { th } from "date-fns/locale";
 
 export interface ContactDetailsProps {
   contactDetails: ContactPopulated;
-  onUnfriend: (username: string) => void;
-  onBlock: (username: string) => void;
 }
 
-function ContactDetails({
-  contactDetails,
-  onUnfriend,
-  // onBlock,
-}: ContactDetailsProps) {
-  const { username } = contactDetails;
+function ContactDetails({ contactDetails }: ContactDetailsProps) {
+  const { username, status, sender } = contactDetails;
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState("");
   const [type, setType] = useState("Unfriend");
@@ -34,52 +36,98 @@ function ContactDetails({
   const openDialog = (type: string) => {
     setIsOpen(true);
     setType(type);
-    if (type === "Unfriend") {
-      setContent(
-        "Are you sure you want to unfriend this user? You will not be able to revert this action."
-      );
-    } else {
-      setContent("Are you sure you want to block this user?");
+
+    if (type === "Block") {
+      setContent(`Are you sure you want to block ${username}?`);
+    } else if (type === "Accept") {
+      setContent(`Accept friend request from ${username}?`);
+    } else if (type === "Decline") {
+      setContent(`Decline friend request from ${username}?`);
+    } else if (type === "Cancel") {
+      setContent(`Cancel friend request to ${username}?`);
     }
   };
 
   const handleModalClose = async (willProceed: boolean) => {
+    let response: AxiosResponse;
+
+    
     try {
       setIsOpen(false);
+
       if (willProceed) {
-        if (type === "Unfriend") {
-          onUnfriend(username);
+        if (type === "Accept") {
+          response = await acceptContact(sender, userDetails.username);
+        } else if (type === "Decline") {
+          response = await rejectContact(sender, userDetails.username);
+        } else if (type === "Cancel") {
+          response = await cancelContact(sender, username);
         } else {
-          // onBlock(username);
-          console.log("Block user");
+          throw new Error("Invalid action");
         }
+        Swal.fire({
+          title: response.data,
+          icon: "success",
+          showConfirmButton: true,
+        });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      if (e.response) {
+        Swal.fire({
+          title: e.response.data,
+          icon: "error",
+          timer: 2500,
+          showConfirmButton: false,
+        });
+      }
     }
   };
 
   const generateOptions = () => {
-    const ROOM_OPTIONS = [
+    const ROOM_OPTIONS_PENDING = [
       {
-        label: "Unfriend",
+        label: "Accept",
         icon: <MeetingRoomIcon />,
-        action: () => openDialog("Unfriend"),
+        action: () => openDialog("Accept"),
       },
-      // {
-      //   label: "Block",
-      //   icon: <DeleteIcon />,
-      //   action: () => openDialog("Block"),
-      // },
+      {
+        label: "Decline",
+        icon: <DeleteIcon />,
+        action: () => openDialog("Decline"),
+      },
     ];
-    return ROOM_OPTIONS.map(({ label, icon, action }, i) => {
-      return (
-        <ListItem key={i} button onClick={action}>
-          <ListItemIcon>{icon}</ListItemIcon>
-          <ListItemText primary={label} />
-        </ListItem>
-      );
-    });
+
+    const ROOM_OPTIONS_SENT = [
+      {
+        label: "Cancel",
+        icon: <DeleteIcon />,
+        action: () => openDialog("Cancel"),
+      },
+    ];
+
+    if (status === "PENDING" && sender === userDetails.username) {
+      return ROOM_OPTIONS_SENT.map(({ label, icon, action }, i) => {
+        return (
+          <ListItem key={i} button onClick={action}>
+            <ListItemIcon>{icon}</ListItemIcon>
+            <ListItemText primary={label} />
+          </ListItem>
+        );
+      });
+    }
+
+    if (status === "PENDING" && sender !== userDetails.username) {
+      return ROOM_OPTIONS_PENDING.map(({ label, icon, action }, i) => {
+        return (
+          <ListItem key={i} button onClick={action}>
+            <ListItemIcon>{icon}</ListItemIcon>
+            <ListItemText primary={label} />
+          </ListItem>
+        );
+      });
+    }
+
+    return null;
   };
 
   return (
