@@ -2,7 +2,6 @@ package app.Link.controller;
 
 import app.Link.dto.contact.ContactAddDto;
 import app.Link.dto.contact.ContactGetDto;
-import app.Link.dto.contact.ContactSendDto;
 import app.Link.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

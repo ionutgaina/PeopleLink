@@ -2,6 +2,7 @@ package app.Link.controller;
 
 import app.Link.dto.contact.ContactAddDto;
 import app.Link.dto.message.MessageDto;
+import app.Link.dto.message.MessageGetDto;
 import app.Link.dto.message.MessageSendDto;
 import app.Link.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +25,10 @@ public class MessageController {
         try {
             messageService.sendMessage(message);
 
-            StringBuilder destTopic = new StringBuilder("/contacts/");
-
-            if (message.getContactSenderName().compareTo(message.getContactReceiverName()) < 0) {
-                destTopic.append(message.getContactSenderName()).append("_").append(message.getContactReceiverName());
-            } else {
-                destTopic.append(message.getContactReceiverName()).append("_").append(message.getContactSenderName());
-            }
-
-            System.out.println(destTopic);
+            String destTopic = "/contacts/" + message.getRoomCode();
 
             messagingTemplate.convertAndSend(
-                    destTopic.toString(),
+                    destTopic,
                     message.getSenderName() + " sent you a direct message"
             );
 
@@ -46,9 +39,9 @@ public class MessageController {
     }
 
     @PostMapping("/getContact")
-    public ResponseEntity<?> getContactMessages(@RequestBody ContactAddDto contactAddDto) {
+    public ResponseEntity<?> getContactMessages(@RequestBody MessageGetDto messageGetDto) {
         try {
-            List<MessageDto> messageList = messageService.getContactMessages(contactAddDto);
+            List<MessageDto> messageList = messageService.getContactMessages(messageGetDto);
             return ResponseEntity.ok().body(messageList);
         } catch (Exception e) {
             return ResponseEntity.status(404).body(e.getMessage());

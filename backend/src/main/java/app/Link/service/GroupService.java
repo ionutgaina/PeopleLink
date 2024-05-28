@@ -194,4 +194,34 @@ public class GroupService {
         groupMemberRepository.delete(member);
     }
 
+    public GroupDto getGroup(String groupName) throws Exception {
+        Group group = groupRepository.findByName(groupName).orElseThrow(
+                () -> new Exception("Group not found")
+        );
+
+        return groupToDto(group);
+    }
+
+    public List<GroupDto> getGroups(String username) throws Exception {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new Exception("User not found")
+        );
+
+        return user.getGroups().stream().map(
+                groupMember -> groupToDto(groupMember.getGroup())
+        ).toList();
+    }
+
+    GroupDto groupToDto(Group group){
+        List<String> members = new ArrayList<>();
+        String admin = null;
+        for (GroupMember groupMember : group.getMembers()) {
+            members.add(groupMember.getUser().getUsername());
+            if (admin == null && groupMember.getRole() == MemberRole.ADMIN) {
+                admin = groupMember.getUser().getUsername();
+            }
+        }
+
+        return new GroupDto(admin, group.getName(), group.getDescription(), members);
+    }
 }
