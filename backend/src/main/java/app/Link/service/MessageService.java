@@ -13,6 +13,7 @@ import app.Link.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -62,6 +63,7 @@ public class MessageService {
         message.setContact(contact);
         message.setUser(messageSender);
         message.setText(messageDto.getText());
+//        message.setTimestamp(LocalDateTime.now());
 
         messageRepository.save(message);
     }
@@ -87,7 +89,7 @@ public class MessageService {
 
             return listMessages(contact);
         } else {
-            senderName = messageGetDto.getUserName().substring(0, index - 1);
+            senderName = messageGetDto.getRoomCode().substring(0, index - 1);
             User senderUser = userRepository.findByUsername(senderName).orElseThrow(
                     () -> new Exception("Contact not found")
             );
@@ -102,7 +104,7 @@ public class MessageService {
 
     List<MessageDto> listMessages(Contact contact) {
         return contact.getMessages().stream().map(
-                message -> new MessageDto(message.getText(), message.getUser().getUsername())
+                message -> new MessageDto(message.getText(), message.getUser().getUsername(), message.getTimestamp())
         ).toList();
     }
 }

@@ -14,6 +14,7 @@ import app.Link.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -59,7 +60,7 @@ public class GroupMessageService {
             throw new Exception("User not in group");
 
         return group.getMessages().stream().map(
-                m -> new MessageDto(m.getText(), m.getSender().getUsername())
+                m -> new MessageDto(m.getText(), m.getSender().getUsername(), m.getTimestamp())
         ).toList();
     }
 }

@@ -23,10 +23,10 @@ public class UserService {
         repository.save(user);
     }
 
-    public User authenticateUser(String username, String password) throws Exception {
+    public void authenticateUser(String username, String password) throws Exception {
         User user = repository.findByUsername(username).orElse(null);
         if (user != null && user.getPassword().equals(password)) {
-            return user;
+            return;
         }
         throw new Exception("Invalid username or password");
     }
