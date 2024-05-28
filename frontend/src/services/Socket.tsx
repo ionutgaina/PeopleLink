@@ -2,6 +2,7 @@ import { Client, StompConfig } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { ContactPopulated, RoomPopulated } from "../types";
 import { getContacts } from "./Contact";
+import { getGroups } from "./Group";
 
 interface mySocketProps {
   username: string;
@@ -23,20 +24,45 @@ export function mySocket({ username, setRooms, setUsers }: mySocketProps) {
         `/user/${username}/queue/contacts`,
         async function (message) {
           console.log("Received private message: ", JSON.parse(message.body));
-          setUsers(await getContacts(username));
+          try {
+            const users = await getContacts(username);
+            if (users) setUsers(users);
+            else setUsers([]);
+          } catch (e: any) {
+            setUsers([]);
+          }
         }
       );
 
       stompClient.subscribe(
         `/user/${username}/queue/rooms`,
-        function (message) {
+        async function (message) {
           console.log("Received room message: ", JSON.parse(message.body));
+          try {
+            const rooms = await getGroups(username);
+            if (rooms) setRooms(rooms);
+            else setRooms([]);
+          } catch (e: any) {
+            setRooms([]);
+          }
         }
       );
 
-      // receive my contacts and rooms
-      // and subscribe to their queues
-      setUsers(await getContacts(username));
+      try {
+        const users = await getContacts(username);
+        if (users) setUsers(users);
+        else setUsers([]);
+      } catch (e: any) {
+        setUsers([]);
+      }
+
+      try {
+        const rooms = await getGroups(username);
+        if (rooms) setRooms(rooms);
+        else setRooms([]);
+      } catch (e: any) {
+        setRooms([]);
+      }
     },
     onDisconnect: (frame) => {
       console.log("Disconnected: " + frame);

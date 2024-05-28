@@ -30,7 +30,7 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
 
-    public void createGroup(GroupDto groupDto) throws Exception {
+    public void createGroup(GroupCreateDto groupDto) throws Exception {
         if (groupRepository.findByName(groupDto.getGroupName()).isPresent()) {
             throw new Exception("Group already exists");
         }
@@ -44,10 +44,6 @@ public class GroupService {
         );
 
         addUser(new GroupMemberDto(group.getName(), owner.getUsername(), MemberRole.ADMIN));
-
-        for (String member : groupDto.getMembers()) {
-            addUser(new GroupMemberDto(group.getName(), member, MemberRole.MEMBER));
-        }
     }
 
     public void inviteUser(GroupInviteDto groupInviteDto) throws Exception {

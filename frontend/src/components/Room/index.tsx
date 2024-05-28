@@ -45,10 +45,6 @@ const Room = () => {
     };
   }, [currentUser, navigate]);
 
-  useEffect(() => {
-    setRooms(roomData);
-  }, []);
-
   const getCurrentRoom = () => rooms.find((room) => room.code === roomCode);
 
   const getCurrentContact = () =>
@@ -56,11 +52,6 @@ const Room = () => {
 
   const handleRoomClick = (code: string) => {
     setRoomCode(code);
-  };
-
-  const handleRoomLeave = (code: string) => {
-    setRoomCode("");
-    setRooms((prevRooms) => prevRooms.filter((room) => room.code !== code));
   };
 
   const handleModalClose = (room: RoomPopulated | null) => {
@@ -121,7 +112,6 @@ const Room = () => {
                   <Chat roomCode={roomCode} />
                   <RoomDetails
                     roomDetails={getCurrentRoom()!}
-                    onRoomLeave={handleRoomLeave}
                   />
                 </>
               )}

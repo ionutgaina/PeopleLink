@@ -23,16 +23,14 @@ public class GroupController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createGroup(@RequestBody GroupDto groupDto) {
+    public ResponseEntity<?> createGroup(@RequestBody GroupCreateDto groupDto) {
         try {
             groupService.createGroup(groupDto);
-            for (String username : groupDto.getMembers()) {
-                messagingTemplate.convertAndSendToUser(
-                        username,
-                        "queue/rooms",
-                        "User " + groupDto.getOwnerName() + " invited you to group " + groupDto.getGroupName()
-                );
-            }
+            messagingTemplate.convertAndSendToUser(
+                    groupDto.getOwnerName(),
+                    "queue/rooms",
+                    "Group " + groupDto.getGroupName() + " has been created"
+            );
             return ResponseEntity.ok().body("Group created!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());

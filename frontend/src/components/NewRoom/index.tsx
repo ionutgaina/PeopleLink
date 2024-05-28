@@ -12,6 +12,7 @@ import { useData } from "../../context/DataContext";
 import { addContact, getContacts } from "../../services/Contact";
 import { useUser } from "../../context/UserContext";
 import Swal from "sweetalert2";
+import { createGroup } from "../../services/Group";
 
 export interface NewRoomProps {
   open: boolean;
@@ -21,6 +22,7 @@ export interface NewRoomProps {
 function NewRoom({ open, onClose }: NewRoomProps) {
   const [isNew, setisNew] = useState(1);
   const [roomCode, setRoomCode] = useState("");
+  const [description, setDescription] = useState("");
   const { users, setUsers, rooms, setRooms } = useData();
   const currentUser = useUser();
 
@@ -32,13 +34,29 @@ function NewRoom({ open, onClose }: NewRoomProps) {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
+    handleClose(null);
 
     if (isNew === 1) {
-      // create room
-      // const res = await createRoom();
-      // if (res) {
-      //   handleClose(res);
-      // }
+      try {
+        const response = await createGroup(
+          currentUser.userDetails.username,
+          roomCode,
+          description
+        );
+        // success message
+        Swal.fire({
+          title: response.data,
+          icon: "success",
+          showConfirmButton: true,
+        });
+      } catch (e: any) {
+        // Error message
+        Swal.fire({
+          title: e.response.data,
+          icon: "error",
+          showConfirmButton: true,
+        });
+      }
     }
 
     if (isNew === 0) {
@@ -51,7 +69,6 @@ function NewRoom({ open, onClose }: NewRoomProps) {
 
     if (isNew === -1) {
       // add contact
-      handleClose(null);
       try {
         const response = await addContact(
           currentUser.userDetails.username,
@@ -62,8 +79,6 @@ function NewRoom({ open, onClose }: NewRoomProps) {
           title: response.data,
           icon: "success",
           showConfirmButton: true,
-        }).then(async () => {
-          setUsers(await getContacts(currentUser.userDetails.username));
         });
       } catch (e: any) {
         // Error message
@@ -112,12 +127,21 @@ function NewRoom({ open, onClose }: NewRoomProps) {
               Add Contact
             </Button>
           </ButtonGroup>
-            <input
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value)}
-              type="text"
-              placeholder={isNew === -1 ? "Contact Username" : "Room Code"}
+          <input
+            value={roomCode}
+            onChange={(e) => setRoomCode(e.target.value)}
+            type="text"
+            placeholder={isNew === -1 ? "Contact Username" : "Room Code"}
+          />
+          {isNew === 1 && (
+            <textarea
+              placeholder="Room description"
+              rows={3}
+              className="newRoom__textarea"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
+          )}
 
           <Button
             onClick={proceed}
