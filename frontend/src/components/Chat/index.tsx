@@ -39,8 +39,9 @@ const Chat = ({ roomCode }: ChatProps) => {
     };
 
     if (socket) {
-      socket.subscribe(`/messages/${roomCode}`, (message) => {
-        const messages = JSON.parse(message.body);
+      socket.subscribe(`/rooms/${roomCode}`, async (message) => {
+        console.log("Message received: ", message);
+        const messages = await getMessages(roomCode, userDetails.username);
         setMessages(messages);
       });
     }
@@ -49,7 +50,7 @@ const Chat = ({ roomCode }: ChatProps) => {
 
     return () => {
       if (socket) {
-        socket.unsubscribe(`/messages/${roomCode}`);
+        socket.unsubscribe(`/rooms/${roomCode}`);
       }
     };
   }, [socket, roomCode, userDetails.username]);
@@ -70,18 +71,17 @@ const Chat = ({ roomCode }: ChatProps) => {
       <div className="chat__body">
         <Scrollbars className="chat__scrollbar">
           <div className="chat__main">
-            {messages.map(({ content, user, createdAt }, i) => {
+            {messages.map(({ content, user, createdAt }: any, i) => {
               const lastMessage = messages.length - 1 === i;
               return (
                 <div
                   className={`chat__block ${
-                    userDetails.username === user.username &&
-                    "chat__block--sender"
-                  } ${user.username === "Chatbot" && "chat__block--bot"}`}
+                    userDetails.username === user && "chat__block--sender"
+                  } ${user === "Chatbot" && "chat__block--bot"}`}
                   key={i}
                 >
                   <div className="message__block">
-                    <Avatar>{user.username.charAt(0)}</Avatar>
+                    <Avatar>{user.charAt(0)}</Avatar>
                     <p
                       ref={lastMessage ? setRef : null}
                       className="chat__message"

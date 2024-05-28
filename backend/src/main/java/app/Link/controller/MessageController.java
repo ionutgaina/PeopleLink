@@ -24,11 +24,30 @@ public class MessageController {
     private final SimpMessagingTemplate messagingTemplate;
     private final GroupMessageService groupMessageService;
 
+    @PostMapping("/")
+    public ResponseEntity<?> getContactMessages(@RequestBody MessageGetDto messageGetDto) {
+        try {
+            if (messageGetDto.getRoomCode().contains(messageGetDto.getUserName())) {
+                List<MessageDto> messageList = messageService.getContactMessages(messageGetDto);
+                return ResponseEntity.ok().body(messageList);
+            } else {
+                GroupMemberDto groupMemberDto = new GroupMemberDto(
+                        messageGetDto.getRoomCode(),
+                        messageGetDto.getUserName()
+                );
+                List<GroupMessageDto> groupMessageList = groupMessageService.getGroupMessages(groupMemberDto);
+                return ResponseEntity.ok().body(groupMessageList);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestBody MessageSendDto message) {
         String destTopic = "/rooms/" + message.getRoomCode();
         try {
-            if (!message.getRoomCode().contains(message.getSenderName())) {
+            if (message.getRoomCode().contains(message.getSenderName())) {
                 messageService.sendMessage(message);
                 messagingTemplate.convertAndSend(
                         destTopic,
@@ -48,25 +67,6 @@ public class MessageController {
             }
 
             return ResponseEntity.ok().body("Message sent successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/")
-    public ResponseEntity<?> getContactMessages(@RequestBody MessageGetDto messageGetDto) {
-        try {
-            if (!messageGetDto.getRoomCode().contains(messageGetDto.getUserName())) {
-                List<MessageDto> messageList = messageService.getContactMessages(messageGetDto);
-                return ResponseEntity.ok().body(messageList);
-            } else {
-                GroupMemberDto groupMemberDto = new GroupMemberDto(
-                        messageGetDto.getRoomCode(),
-                        messageGetDto.getUserName()
-                );
-                List<GroupMessageDto> groupMessageList = groupMessageService.getGroupMessages(groupMemberDto);
-                return ResponseEntity.ok().body(groupMessageList);
-            }
         } catch (Exception e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
