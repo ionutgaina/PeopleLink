@@ -30,8 +30,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserRegisterDto userRegisterDto) {
         try {
-            User authenticatedUser = userService.authenticateUser(userRegisterDto.getUsername(), userRegisterDto.getPassword());
-            return ResponseEntity.ok().body("Authenticated user: " + authenticatedUser);
+            userService.authenticateUser(userRegisterDto.getUsername(), userRegisterDto.getPassword());
+            return ResponseEntity.ok().body("Login successful!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
