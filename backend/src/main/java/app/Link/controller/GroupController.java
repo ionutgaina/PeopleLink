@@ -105,4 +105,34 @@ public class GroupController {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping("/join")
+    public ResponseEntity<?> leaveGroup(@RequestBody GroupJoinDto groupJoinDto) {
+        try {
+            groupService.joinGroup(groupJoinDto);
+            return ResponseEntity.ok().body("Group joined!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("{groupName}")
+    public ResponseEntity<?> getGroup(@PathVariable String groupName) {
+        try {
+            GroupDto group = groupService.getGroup(groupName);
+            return ResponseEntity.ok().body(group);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<?> getUserGroups(@PathVariable String username) {
+        try {
+            List<GroupDto> groups = groupService.getGroups(username);
+            return ResponseEntity.ok().body(groups);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
 }

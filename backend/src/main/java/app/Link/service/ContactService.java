@@ -3,13 +3,10 @@ package app.Link.service;
 import app.Link.common.ContactStatus;
 import app.Link.dto.contact.ContactAddDto;
 import app.Link.dto.contact.ContactGetDto;
-import app.Link.dto.contact.ContactSendDto;
-import app.Link.dto.user.UserGetDto;
 import app.Link.model.Contact;
 import app.Link.model.User;
 import app.Link.repository.ContactRepository;
 import app.Link.repository.UserRepository;
-import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -131,17 +128,9 @@ public class ContactService {
                                 contact.getSender().getUsername(),
                                 contact.getReceiver().getUsername(),
                                 contact.getStatus().toString(),
-                                contactCode(contact)
+                                contact.getSender().getUsername() + "_" + contact.getReceiver().getUsername()
                         )
                 ).toList();
-    }
-
-    private String contactCode(Contact contact) {
-        if (contact.getSender().getUsername().compareTo(contact.getReceiver().getUsername()) < 0) {
-            return contact.getSender().getUsername() + "_" + contact.getReceiver().getUsername();
-        }
-
-        return contact.getReceiver().getUsername() + "_" + contact.getSender().getUsername();
     }
 
     public void blockContact(ContactAddDto contactToBlock) throws Exception {

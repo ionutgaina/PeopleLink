@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MessageSendDto {
-    private String text;
-    private String senderName;
+public class MessageGetDto {
     private String roomCode;
+    private String userName;
 }
