@@ -28,32 +28,9 @@ public class MessageService {
                 () -> new Exception("User not found")
         );
 
-        int index = messageDto.getRoomCode().indexOf(messageDto.getSenderName());
-        String contactUserName;
-
-        Contact contact;
-
-        if (index == 0) {
-            contactUserName = messageDto.getRoomCode().substring(messageDto.getSenderName().length() + 1);
-
-            User receiverUser = userRepository.findByUsername(contactUserName).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-
-            contact = contactRepository.findBySenderAndReceiver(messageSender, receiverUser).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-        } else {
-            contactUserName = messageDto.getRoomCode().substring(0, index - 1);
-
-            User senderUser = userRepository.findByUsername(contactUserName).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-
-            contact = contactRepository.findBySenderAndReceiver(senderUser, messageSender).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-        }
+        Contact contact = contactRepository.findByRoomCode(messageDto.getRoomCode()).orElseThrow(
+                () -> new Exception("Contact not found")
+        );
 
         if (contact.getStatus() != ContactStatus.ACCEPTED) {
             throw new Exception("Contact not accepted");
@@ -70,37 +47,11 @@ public class MessageService {
     }
 
     public List<MessageDto> getContactMessages(MessageGetDto messageGetDto) throws Exception {
-        User user = userRepository.findByUsername(messageGetDto.getUserName()).orElseThrow(
-                () -> new Exception("User not found")
+        Contact contact = contactRepository.findByRoomCode(messageGetDto.getRoomCode()).orElseThrow(
+                () -> new Exception("Contact not found")
         );
 
-        String senderName;
-        String receiverName;
-
-        int index = messageGetDto.getRoomCode().indexOf(messageGetDto.getUserName());
-        if (index == 0) {
-            receiverName = messageGetDto.getRoomCode().substring(messageGetDto.getUserName().length() + 1);
-            User receiverUser = userRepository.findByUsername(receiverName).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-
-            Contact contact = contactRepository.findBySenderAndReceiver(user, receiverUser).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-
-            return listMessages(contact);
-        } else {
-            senderName = messageGetDto.getRoomCode().substring(0, index - 1);
-            User senderUser = userRepository.findByUsername(senderName).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-
-            Contact contact = contactRepository.findBySenderAndReceiver(senderUser, user).orElseThrow(
-                    () -> new Exception("Contact not found")
-            );
-
-            return listMessages(contact);
-        }
+        return listMessages(contact);
     }
 
     List<MessageDto> listMessages(Contact contact) {

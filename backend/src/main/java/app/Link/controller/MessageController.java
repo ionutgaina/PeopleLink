@@ -32,8 +32,7 @@ public class MessageController {
     public ResponseEntity<?> sendMessage(@RequestBody MessageSendDto message) {
         String destTopic = "/rooms/" + message.getRoomCode();
         try {
-
-            if (!message.getRoomCode().contains(message.getSenderName())) {
+            if (message.getRoomCode().contains(message.getSenderName())) {
                 messageService.sendMessage(message);
                 messagingTemplate.convertAndSend(
                         destTopic,
@@ -91,7 +90,7 @@ public class MessageController {
     @PostMapping("/")
     public ResponseEntity<?> getContactMessages(@RequestBody MessageGetDto messageGetDto) {
         try {
-            if (!messageGetDto.getRoomCode().contains(messageGetDto.getUserName())) {
+            if (messageGetDto.getRoomCode().contains(messageGetDto.getUserName())) {
                 List<MessageDto> messageList = messageService.getContactMessages(messageGetDto);
                 return ResponseEntity.ok().body(messageList);
             } else {
