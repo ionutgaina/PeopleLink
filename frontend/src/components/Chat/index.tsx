@@ -1,6 +1,6 @@
 import { Avatar } from "@mui/material";
 import { useState, useEffect, useCallback } from "react";
-import { Scrollbars } from 'react-custom-scrollbars-2';
+import { Scrollbars } from "react-custom-scrollbars-2";
 import "./style.css";
 import { MessagePopulated } from "../../types";
 import {
@@ -13,8 +13,10 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useUser } from "../../context/UserContext";
 import ChatHeader from "../ChatHeader";
 import ChatFooter from "../ChatFooter";
-import { messageData } from "../../constants";
 import { useData } from "../../context/DataContext";
+import { useStompClient } from "react-stomp-hooks";
+import { getMessages } from "../../services/Messages";
+import { useSocket } from "../../context/SocketContext";
 
 export interface ChatProps {
   roomCode: string;
@@ -23,15 +25,34 @@ export interface ChatProps {
 const Chat = ({ roomCode }: ChatProps) => {
   const [messages, setMessages] = useState([] as MessagePopulated[]);
   const { userDetails } = useUser();
+  const socket = useSocket();
   const setRef = useCallback((node: HTMLElement | null) => {
     if (node) {
-      node.scrollIntoView({ behavior: 'smooth' });
+      node.scrollIntoView({ behavior: "smooth" });
     }
   }, []);
 
   useEffect(() => {
-    setMessages(messageData.filter((msg) => msg.roomCode === roomCode));
-  }, [roomCode]);
+    const fetchData = async () => {
+      const messages = await getMessages(roomCode, userDetails.username);
+      setMessages(messages);
+    };
+
+    if (socket) {
+      socket.subscribe(`/contacts/${roomCode}`, (message) => {
+        const messages = JSON.parse(message.body);
+        setMessages(messages);
+      });
+    }
+
+    fetchData();
+
+    return () => {
+      if (socket) {
+        socket.unsubscribe(`/contacts/${roomCode}`);
+      }
+    };
+  }, [socket, roomCode, userDetails.username]);
 
   const formatDate = (date: Date) => {
     return differenceInCalendarDays(new Date(), date) > 2
