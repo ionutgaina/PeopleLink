@@ -3,10 +3,12 @@ package app.Link.dto.groupMessage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
-public class MessageSendDto {
-    private String senderName;
+public class GroupMessageDto {
     private String text;
-    private String groupName;
+    private String senderName;
+    private LocalDateTime timestamp;
 }
