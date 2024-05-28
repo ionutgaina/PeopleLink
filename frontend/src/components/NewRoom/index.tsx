@@ -8,6 +8,10 @@ import {
 } from "@mui/material";
 import "./style.css";
 import { RoomPopulated } from "../../types";
+import { useData } from "../../context/DataContext";
+import { addContact, getContacts } from "../../services/Contact";
+import { useUser } from "../../context/UserContext";
+import Swal from "sweetalert2";
 
 export interface NewRoomProps {
   open: boolean;
@@ -16,6 +20,10 @@ export interface NewRoomProps {
 
 function NewRoom({ open, onClose }: NewRoomProps) {
   const [isNew, setisNew] = useState(1);
+  const [description, setDescription] = useState("");
+  const [roomCode, setRoomCode] = useState("");
+  const { users, setUsers, rooms, setRooms } = useData();
+  const currentUser = useUser();
 
   const handleClose = (val: null | RoomPopulated) => {
     onClose(val);
@@ -25,7 +33,48 @@ function NewRoom({ open, onClose }: NewRoomProps) {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    handleClose(null);
+
+    if (isNew === 1) {
+      // create room
+      // const res = await createRoom();
+      // if (res) {
+      //   handleClose(res);
+      // }
+    }
+
+    if (isNew === 0) {
+      // join room
+      // const res = await joinRoom();
+      // if (res) {
+      //   handleClose(res);
+      // }
+    }
+
+    if (isNew === -1) {
+      // add contact
+      handleClose(null);
+      try {
+        const response = await addContact(
+          currentUser.userDetails.username,
+          roomCode
+        );
+        // success message
+        Swal.fire({
+          title: response.data,
+          icon: "success",
+          showConfirmButton: true,
+        }).then(async () => {
+          setUsers(await getContacts(currentUser.userDetails.username));
+        });
+      } catch (e: any) {
+        // Error message
+        Swal.fire({
+          title: e.response.data,
+          icon: "error",
+          showConfirmButton: true,
+        });
+      }
+    }
   };
 
   return (
@@ -66,9 +115,19 @@ function NewRoom({ open, onClose }: NewRoomProps) {
           </ButtonGroup>
 
           {isNew === 1 ? (
-            <textarea rows={3} placeholder="Room Description" />
+            <textarea
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Room Description"
+            />
           ) : (
-            <input type="text" placeholder="Name" />
+            <input
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value)}
+              type="text"
+              placeholder={isNew === 0 ? "Room Code" : "Contact Username"}
+            />
           )}
 
           <Button

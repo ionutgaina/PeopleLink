@@ -25,6 +25,17 @@ const SidebarContact = ({
         <div className={`sidebarRoom__details`}>
           <h2>{user.username}</h2>
         </div>
+        {user.status === "PENDING" && user.sender !== userDetails.username && (
+          <div className="sidebarRoom__unread">
+            <p>Friend request</p>
+          </div>
+        )}
+
+        {user.status === "PENDING" && user.sender === userDetails.username && (
+          <div className="sidebarRoom__unread">
+            <p>Friend sent</p>
+          </div>
+        )}
       </React.Fragment>
     </div>
   );

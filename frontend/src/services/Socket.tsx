@@ -23,7 +23,7 @@ export function mySocket({ username, setRooms, setUsers }: mySocketProps) {
         `/user/${username}/queue/contacts`,
         async function (message) {
           console.log("Received private message: ", JSON.parse(message.body));
-          contactsFunction(username, setUsers);
+          setUsers(await getContacts(username));
         }
       );
 
@@ -36,7 +36,7 @@ export function mySocket({ username, setRooms, setUsers }: mySocketProps) {
 
       // receive my contacts and rooms
       // and subscribe to their queues
-      contactsFunction(username, setUsers);
+      setUsers(await getContacts(username));
     },
     onDisconnect: (frame) => {
       console.log("Disconnected: " + frame);
@@ -57,20 +57,4 @@ export function mySocket({ username, setRooms, setUsers }: mySocketProps) {
   stompClient.activate();
 
   return stompClient;
-}
-
-
-
-const contactsFunction = async (username: string, setUsers: any) => {
-  let contacts = await getContacts(username);
-
-  let users = contacts.data.map((contact: any) => {
-    return {
-      username: username === contact.sender ? contact.receiver : contact.sender,
-      status: contact.status,
-    };
-  });
-
-  setUsers(users);
-  console.log("Users: ", users);
 }
