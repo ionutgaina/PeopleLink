@@ -12,7 +12,7 @@ import { useData } from "../../context/DataContext";
 import { addContact, getContacts } from "../../services/Contact";
 import { useUser } from "../../context/UserContext";
 import Swal from "sweetalert2";
-import { createGroup } from "../../services/Group";
+import { createGroup, joinRoom } from "../../services/Group";
 
 export interface NewRoomProps {
   open: boolean;
@@ -61,10 +61,25 @@ function NewRoom({ open, onClose }: NewRoomProps) {
 
     if (isNew === 0) {
       // join room
-      // const res = await joinRoom();
-      // if (res) {
-      //   handleClose(res);
-      // }
+      try {
+        const response = await joinRoom(
+          currentUser.userDetails.username,
+          roomCode
+        );
+        // success message
+        Swal.fire({
+          title: response.data,
+          icon: "success",
+          showConfirmButton: true,
+        });
+      } catch (e: any) {
+        // Error message
+        Swal.fire({
+          title: e.response.data,
+          icon: "error",
+          showConfirmButton: true,
+        });
+      }
     }
 
     if (isNew === -1) {

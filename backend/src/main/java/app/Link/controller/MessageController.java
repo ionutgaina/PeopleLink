@@ -55,8 +55,8 @@ public class MessageController {
                 );
             } else {
                 GroupMessageSendDto groupMessageDto = new GroupMessageSendDto(
-                        message.getText(),
                         message.getSenderName(),
+                        message.getText(),
                         message.getRoomCode()
                 );
                 groupMessageService.sendMessage(groupMessageDto);

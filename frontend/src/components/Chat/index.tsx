@@ -9,12 +9,9 @@ import {
   format,
   formatDistanceToNow,
 } from "date-fns";
-import PersonIcon from "@mui/icons-material/Person";
 import { useUser } from "../../context/UserContext";
 import ChatHeader from "../ChatHeader";
 import ChatFooter from "../ChatFooter";
-import { useData } from "../../context/DataContext";
-import { useStompClient } from "react-stomp-hooks";
 import { getMessages } from "../../services/Messages";
 import { useSocket } from "../../context/SocketContext";
 
@@ -41,16 +38,21 @@ const Chat = ({ roomCode }: ChatProps) => {
     if (socket) {
       socket.subscribe(`/rooms/${roomCode}`, async (message) => {
         console.log("Message received: ", message);
-        const messages = await getMessages(roomCode, userDetails.username);
-        setMessages(messages);
-      });
+        try {
+          const messages = await getMessages(roomCode, userDetails.username);
+          console.log("Messages: ", messages);
+          setMessages(messages);
+        } catch (error) {
+          // console.log("Error: ", error);
+        }
+      }, { id : "chat"});
     }
 
     fetchData();
 
     return () => {
       if (socket) {
-        socket.unsubscribe(`/rooms/${roomCode}`);
+        socket.unsubscribe("chat");
       }
     };
   }, [socket, roomCode, userDetails.username]);
@@ -68,7 +70,12 @@ const Chat = ({ roomCode }: ChatProps) => {
         messages={messages}
         formatDate={formatDate}
       />
-      <div className="chat__body">
+      <div
+        className="chat__body"
+        style={{
+          paddingTop: "10px",
+        }}
+      >
         <Scrollbars className="chat__scrollbar">
           <div className="chat__main">
             {messages.map(({ content, user, createdAt }: any, i) => {
@@ -77,7 +84,7 @@ const Chat = ({ roomCode }: ChatProps) => {
                 <div
                   className={`chat__block ${
                     userDetails.username === user && "chat__block--sender"
-                  } ${user === "Chatbot" && "chat__block--bot"}`}
+                  }`}
                   key={i}
                 >
                   <div className="message__block">
@@ -87,9 +94,7 @@ const Chat = ({ roomCode }: ChatProps) => {
                       className="chat__message"
                     >
                       <span className="header__text chat__person">
-                        {userDetails.username === user.username
-                          ? "You"
-                          : user.username}
+                        {userDetails.username === user ? "You" : user}
                       </span>
                       {content}
                     </p>
