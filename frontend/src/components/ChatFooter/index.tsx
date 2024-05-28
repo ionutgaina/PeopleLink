@@ -44,21 +44,23 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0].type.startsWith("image/")) {
+    if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setFilePreview(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-    } else {
-      Swal.fire({
-        title: "Only image files are allowed",
-        icon: "warning",
-        timer: 2500,
-        showConfirmButton: false,
-      });
+      if (selectedFile.type.startsWith("image/")) {
+        setFile(selectedFile);
+        const reader = new FileReader();
+        reader.onload = () => {
+          setFilePreview(reader.result as string);
+        };
+        reader.readAsDataURL(selectedFile);
+      } else {
+        Swal.fire({
+          title: "Only image files are allowed",
+          icon: "warning",
+          timer: 2500,
+          showConfirmButton: false,
+        });
+      }
     }
   };
 
