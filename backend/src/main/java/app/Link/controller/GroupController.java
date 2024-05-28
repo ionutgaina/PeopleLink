@@ -1,5 +1,4 @@
 package app.Link.controller;
-
 import app.Link.dto.group.*;
 import app.Link.dto.group.GroupDescriptionDto;
 import app.Link.dto.group.GroupDto;
@@ -23,16 +22,14 @@ public class GroupController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createGroup(@RequestBody GroupDto groupDto) {
+    public ResponseEntity<?> createGroup(@RequestBody GroupCreateDto groupCreateDto) {
         try {
-            groupService.createGroup(groupDto);
-            for (String username : groupDto.getMembers()) {
-                messagingTemplate.convertAndSendToUser(
-                        username,
-                        "queue/rooms",
-                        "User " + groupDto.getOwnerName() + " invited you to group " + groupDto.getGroupName()
-                );
-            }
+            groupService.createGroup(groupCreateDto);
+            messagingTemplate.convertAndSendToUser(
+                    groupCreateDto.getOwnerName(),
+                    "queue/rooms",
+                    "Group " + groupCreateDto.getGroupName() + " has been created"
+            );
             return ResponseEntity.ok().body("Group created!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
