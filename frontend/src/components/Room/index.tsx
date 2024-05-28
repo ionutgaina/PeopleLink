@@ -73,7 +73,9 @@ const Room = () => {
 
   return clientStomp.current ? (
     <SocketContext.Provider value={clientStomp.current}>
-      <DataContext.Provider value={{ users, rooms, setUsers, setRooms }}>
+      <DataContext.Provider
+        value={{ users, rooms, setUsers, setRooms, roomCode, setRoomCode }}
+      >
         <div className="room">
           <Sidebar
             onNewRoom={() => setOpenModal(true)}
@@ -83,16 +85,19 @@ const Room = () => {
             )}
             onRoomClick={handleRoomClick}
           />
-          {roomCode ? (
+          {users.find((user) => user.roomCode === roomCode) ||
+          rooms.find((room) => room.code === roomCode) ? (
             <>
               {users.find((user) => user.roomCode === roomCode) ? (
                 <>
-                  {users.find((user) => user.username === roomCode)?.status ===
+                  {users.find((user) => user.roomCode === roomCode)?.status ===
                   "PENDING" ? (
-                    <div style={{
-                      display: "flex",
-                      width: "90%",
-                    }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        width: "90%",
+                      }}
+                    >
                       <ContactDetails contactDetails={getCurrentContact()!} />
                     </div>
                   ) : (

@@ -26,6 +26,7 @@
 }
 .newRoom__button--selected.MuiButton-outlined {
 	background-color: #219ebc;
+	color: #fff
 }
 .newRoom__button--selected.MuiButton-outlined:hover {
 	background-color: #1e8fac;

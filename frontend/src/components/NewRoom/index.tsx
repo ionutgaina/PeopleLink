@@ -20,7 +20,6 @@ export interface NewRoomProps {
 
 function NewRoom({ open, onClose }: NewRoomProps) {
   const [isNew, setisNew] = useState(1);
-  const [description, setDescription] = useState("");
   const [roomCode, setRoomCode] = useState("");
   const { users, setUsers, rooms, setRooms } = useData();
   const currentUser = useUser();
@@ -84,7 +83,7 @@ function NewRoom({ open, onClose }: NewRoomProps) {
       open={open}
       className="newRoom"
     >
-      <DialogTitle id="new-room-dialog">New Room</DialogTitle>
+      <DialogTitle id="new-room-dialog">New chat</DialogTitle>
       <DialogContent className="newRoom__content">
         <form>
           <ButtonGroup className="newRoom__type" color="primary">
@@ -113,22 +112,12 @@ function NewRoom({ open, onClose }: NewRoomProps) {
               Add Contact
             </Button>
           </ButtonGroup>
-
-          {isNew === 1 ? (
-            <textarea
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Room Description"
-            />
-          ) : (
             <input
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value)}
               type="text"
-              placeholder={isNew === 0 ? "Room Code" : "Contact Username"}
+              placeholder={isNew === -1 ? "Contact Username" : "Room Code"}
             />
-          )}
 
           <Button
             onClick={proceed}

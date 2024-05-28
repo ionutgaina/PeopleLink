@@ -13,7 +13,6 @@ function ChatHeader({ roomCode, messages, formatDate }: ChatHeaderProps) {
 	return (
 		<div className="chat__header">
 			<div className="chat__headerInfo">
-				<h3>Room {roomCode}</h3>
 				<p>
 					{messages.length > 0 ? (
 						'Last activity ' + formatDate(parseISO(messages[messages.length - 1].createdAt))

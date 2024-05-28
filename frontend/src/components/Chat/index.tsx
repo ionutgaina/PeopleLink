@@ -14,6 +14,7 @@ import { useUser } from "../../context/UserContext";
 import ChatHeader from "../ChatHeader";
 import ChatFooter from "../ChatFooter";
 import { messageData } from "../../constants";
+import { useData } from "../../context/DataContext";
 
 export interface ChatProps {
   roomCode: string;
@@ -27,7 +28,6 @@ const Chat = ({ roomCode }: ChatProps) => {
       node.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
-  
 
   useEffect(() => {
     setMessages(messageData.filter((msg) => msg.roomCode === roomCode));
