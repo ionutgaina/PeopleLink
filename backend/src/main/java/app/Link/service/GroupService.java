@@ -18,8 +18,10 @@ import app.Link.repository.GroupMemberRepository;
 import app.Link.repository.GroupRepository;
 import app.Link.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
 
-    public void createGroup(GroupDto groupDto) throws Exception {
+    public void createGroup(GroupCreateDto groupDto) throws Exception {
         if (groupRepository.findByName(groupDto.getGroupName()).isPresent()) {
             throw new Exception("Group already exists");
         }
@@ -42,10 +44,6 @@ public class GroupService {
         );
 
         addUser(new GroupMemberDto(group.getName(), owner.getUsername(), MemberRole.ADMIN));
-
-        for (String member : groupDto.getMembers()) {
-            addUser(new GroupMemberDto(group.getName(), member, MemberRole.MEMBER));
-        }
     }
 
     public void inviteUser(GroupInviteDto groupInviteDto) throws Exception {
@@ -89,7 +87,7 @@ public class GroupService {
         groupMemberRepository.save(groupMember);
     }
 
-    public void removeGroup(GroupRemoveDto groupRemoveDto) throws Exception {
+    public List<String> removeGroup(GroupRemoveDto groupRemoveDto) throws Exception {
         System.out.println(groupRemoveDto.getGroupName());
         Group group = groupRepository.findByName(groupRemoveDto.getGroupName()).orElseThrow(
                 () -> new Exception("Group not found")
@@ -107,10 +105,16 @@ public class GroupService {
             throw new Exception("Not allowed to remove this group");
         }
 
-        group.getMembers().forEach(groupMember -> System.out.println(groupMember.getUser().getUsername()));
+        List<String> membersToNotify = new ArrayList<>();
+
+        for (GroupMember groupMember : group.getMembers()) {
+            membersToNotify.add(groupMember.getUser().getUsername());
+        }
 
         groupMemberRepository.deleteAll(group.getMembers());
         groupRepository.delete(group);
+
+        return membersToNotify;
     }
 
     public void removeMember(GroupRemoveUserDto groupRemoveUserDto) throws Exception {
@@ -118,11 +122,11 @@ public class GroupService {
                 () -> new Exception("Group not found")
         );
 
-        User adminUser = userRepository.findByUsername(groupRemoveUserDto.getUsername()).orElseThrow(
+        User adminUser = userRepository.findByUsername(groupRemoveUserDto.getUserName()).orElseThrow(
                 () -> new Exception("Admin user not found")
         );
 
-        User removeUser = userRepository.findByUsername(groupRemoveUserDto.getRemoveUsername()).orElseThrow(
+        User removeUser = userRepository.findByUsername(groupRemoveUserDto.getRemoveUserName()).orElseThrow(
                 () -> new Exception("Remove user not found")
         );
 
@@ -186,4 +190,38 @@ public class GroupService {
         groupMemberRepository.delete(member);
     }
 
+    public GroupDto getGroup(String groupName) throws Exception {
+        Group group = groupRepository.findByName(groupName).orElseThrow(
+                () -> new Exception("Group not found")
+        );
+
+        return groupToDto(group);
+    }
+
+    public List<GroupDto> getGroups(String username) throws Exception {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new Exception("User not found")
+        );
+
+        return user.getGroups().stream().map(
+                groupMember -> groupToDto(groupMember.getGroup())
+        ).toList();
+    }
+
+    GroupDto groupToDto(Group group){
+        List<String> members = new ArrayList<>();
+        String admin = null;
+        for (GroupMember groupMember : group.getMembers()) {
+            members.add(groupMember.getUser().getUsername());
+            if (admin == null && groupMember.getRole() == MemberRole.ADMIN) {
+                admin = groupMember.getUser().getUsername();
+            }
+        }
+
+        return new GroupDto(admin, group.getName(), group.getDescription(), members);
+    }
+
+    public void joinGroup(GroupJoinDto groupJoinDto) throws Exception {
+        addUser(new GroupMemberDto(groupJoinDto.getGroupName(), groupJoinDto.getUserName(), MemberRole.MEMBER));
+    }
 }

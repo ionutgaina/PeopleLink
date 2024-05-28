@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class GroupDescriptionDto {
-    private String username;
+    private String userName;
     private String groupName;
     private String description;
 }

@@ -6,3 +6,9 @@ export const instance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+export const getRoomUsers = async (sender: string, receiver: string) => {
+  const roomcode = [sender, receiver].sort().join("_");
+  console.log(roomcode);
+  return roomcode;
+};

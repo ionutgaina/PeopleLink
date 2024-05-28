@@ -2,7 +2,7 @@ package app.Link.service;
 
 import app.Link.common.ContactStatus;
 import app.Link.dto.contact.ContactAddDto;
-import app.Link.dto.user.UserGetDto;
+import app.Link.dto.contact.ContactGetDto;
 import app.Link.model.Contact;
 import app.Link.model.User;
 import app.Link.repository.ContactRepository;
@@ -28,6 +28,10 @@ public class ContactService {
         );
 
         if (contactRepository.findBySenderAndReceiver(sender, receiver).isPresent()) {
+            throw new Exception("Friend request already sent");
+        }
+
+        if (contactRepository.findBySenderAndReceiver(receiver, sender).isPresent()) {
             throw new Exception("Friend request already sent");
         }
 
@@ -64,12 +68,12 @@ public class ContactService {
 
         Contact contact = contactRepository.findBySenderAndReceiver(sender, receiver).orElseThrow(
                 () -> new Exception("Contact not found"));
-        contact.setStatus(ContactStatus.REJECTED);
-        contactRepository.save(contact);
+
+        contactRepository.delete(contact);
     }
 
-    public List<ContactAddDto> getPendingContacts(UserGetDto user) throws Exception {
-        User receiver = userRepository.findByUsername(user.getUsername()).orElseThrow(
+    public List<ContactAddDto> getPendingContacts(String user) throws Exception {
+        User receiver = userRepository.findByUsername(user).orElseThrow(
                 () -> new Exception("User not found")
         );
 
@@ -84,8 +88,8 @@ public class ContactService {
                 .toList();
     }
 
-    public List<ContactAddDto> getSentRequests(UserGetDto user) throws Exception {
-        User sender = userRepository.findByUsername(user.getUsername()).orElseThrow(
+    public List<ContactAddDto> getSentRequests(String user) throws Exception {
+        User sender = userRepository.findByUsername(user).orElseThrow(
                 () -> new Exception("User not found")
         );
 
@@ -113,19 +117,19 @@ public class ContactService {
         contactRepository.delete(contact);
     }
 
-    public List<ContactAddDto> getContacts(UserGetDto userDto) throws Exception {
-        User user = userRepository.findByUsername(userDto.getUsername()).orElseThrow(
+    public List<ContactGetDto> getContacts(String username) throws Exception {
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new Exception("User not found")
         );
 
         return contactRepository.findBySenderOrReceiver(user, user)
                 .stream()
-                .filter(
-                        contact -> contact.getStatus() == ContactStatus.ACCEPTED
-                ).map(
-                        contact -> new ContactAddDto(
+                .filter(c -> c.getStatus() != ContactStatus.REJECTED).map(
+                        contact -> new ContactGetDto(
                                 contact.getSender().getUsername(),
-                                contact.getReceiver().getUsername()
+                                contact.getReceiver().getUsername(),
+                                contact.getStatus().toString(),
+                                contact.getSender().getUsername() + "_" + contact.getReceiver().getUsername()
                         )
                 ).toList();
     }

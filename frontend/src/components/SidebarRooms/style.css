@@ -34,17 +34,7 @@
 	font-size: 0.9rem;
 	margin: 0.25rem 0;
 }
-.sidebarRoom__unread p {
-	padding: 0.25rem;
-	width: 1rem;
-	height: 1rem;
-	font-size: 0.75rem;
-	background-color: #fb8500;
-	border-radius: 50%;
-	color: #fff;
-	text-align: center;
-	margin: auto;
-}
+
 .sidebarRoom__details--unread > h2,
 .sidebarRoom__details--unread > p {
 	font-weight: 600;

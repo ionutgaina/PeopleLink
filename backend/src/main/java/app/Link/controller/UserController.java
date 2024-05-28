@@ -1,15 +1,10 @@
 package app.Link.controller;
 
-import app.Link.dto.user.UserGetDto;
 import app.Link.dto.user.UserRegisterDto;
 import app.Link.model.User;
 import app.Link.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +30,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserRegisterDto userRegisterDto) {
         try {
-            User authenticatedUser = userService.authenticateUser(userRegisterDto.getUsername(), userRegisterDto.getPassword());
-            return ResponseEntity.ok().body("Authenticated user: " + authenticatedUser);
+            userService.authenticateUser(userRegisterDto.getUsername(), userRegisterDto.getPassword());
+            return ResponseEntity.ok().body("Login successful!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }

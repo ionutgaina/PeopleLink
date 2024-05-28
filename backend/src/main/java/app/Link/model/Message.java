@@ -1,10 +1,14 @@
 package app.Link.model;
 
 import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -28,4 +32,8 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "contact_id", nullable = false)
     private Contact contact;
+
+    @CreationTimestamp
+    @Column(name = "timestamp", nullable = false, updatable = false)
+    private LocalDateTime timestamp;
 }
