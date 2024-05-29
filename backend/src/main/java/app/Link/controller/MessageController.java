@@ -28,29 +28,35 @@ public class MessageController {
     private final GroupMessageService groupMessageService;
     private final S3Service s3Service;
 
-    @PostMapping(value="/sendFile")
+    @PostMapping(value = "/send", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<?> sendMessage(
-                                         @RequestParam("file") MultipartFile file) {
+            @RequestPart(value = "text", required = false) String text,
+            @RequestPart("senderName") String senderName,
+            @RequestPart("roomCode") String roomCode,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
-            // Creează DTO-ul MessageSendDto
-            String fileUrl = null;
-            System.out.println(file);
-            // Procesează atașamentul dacă există
-            if (file != null && !file.isEmpty()) {
-                System.out.println("File received");
-                fileUrl = s3Service.uploadFile(file); // Implementați metoda uploadFile în MessageService
-                System.out.println(fileUrl);
+            if (text == null || text.isEmpty()) {
+                text = "";
             }
-            MessageSendDto message = new MessageSendDto("text", "senderName", "roomCode", fileUrl);
+            // Process the file if it exists
+            String fileUrl = null;
+            if (file != null && !file.isEmpty()) {
+                fileUrl = s3Service.uploadFile(file);
+            }
 
-            messageService.sendMessage(message);
+            // Create the message DTO
+            MessageSendDto message = new MessageSendDto(text, senderName, roomCode, fileUrl);
 
-            String destTopic = "/contacts/" + message.getRoomCode();
-
-            messagingTemplate.convertAndSend(
-                    destTopic,
-                    message.getSenderName() + " sent you a direct message"
-            );
+            // Determine the destination topic and send the message
+            String destTopic = "/rooms/" + roomCode;
+            if (roomCode.contains(senderName)) {
+                messageService.sendMessage(message);
+                messagingTemplate.convertAndSend(destTopic, senderName + " sent you a message");
+            } else {
+                GroupMessageSendDto groupMessageDto = new GroupMessageSendDto(senderName, text, roomCode);
+                groupMessageService.sendMessage(groupMessageDto);
+                messagingTemplate.convertAndSend(destTopic, senderName + " sent a message in " + roomCode);
+            }
 
             return ResponseEntity.ok().body("Message sent successfully");
         } catch (Exception e) {
@@ -72,35 +78,6 @@ public class MessageController {
                 List<GroupMessageDto> groupMessageList = groupMessageService.getGroupMessages(groupMemberDto);
                 return ResponseEntity.ok().body(groupMessageList);
             }
-        } catch (Exception e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestBody MessageSendDto message) {
-        String destTopic = "/rooms/" + message.getRoomCode();
-        try {
-            if (message.getRoomCode().contains(message.getSenderName())) {
-                messageService.sendMessage(message);
-                messagingTemplate.convertAndSend(
-                        destTopic,
-                        message.getSenderName() + "sent you a message"
-                );
-            } else {
-                GroupMessageSendDto groupMessageDto = new GroupMessageSendDto(
-                        message.getSenderName(),
-                        message.getText(),
-                        message.getRoomCode()
-                );
-                groupMessageService.sendMessage(groupMessageDto);
-                messagingTemplate.convertAndSend(
-                        destTopic,
-                        message.getSenderName() + " sent a message in " + message.getRoomCode()
-                );
-            }
-
-            return ResponseEntity.ok().body("Message sent successfully");
         } catch (Exception e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }

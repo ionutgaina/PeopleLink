@@ -30,6 +30,10 @@ public class GroupMessage {
     private Group group;
 
     @Lob
+    @Column(name = "media_url", length = 2083)
+    private String mediaUrl;
+
+    @Lob
     @Column(name = "text", nullable = false)
     private String text;
 

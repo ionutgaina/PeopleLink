@@ -17,20 +17,17 @@ export const getMessages = async (roomCode: string, userName: string) => {
 export const sendMessage = async (
   roomCode: string,
   senderName: string,
-  text: string
+  text: string,
+  file: File | null
 ) => {
-  return instance.post(`/messages/send`, {
-    roomCode,
-    senderName,
-    text,
-  });
-};
-
-export const sendFile = async (file: File) => {
   const formData = new FormData();
-  formData.append("file", file);
+  if (file) formData.append("file", file);
 
-  return instance.post(`/messages/sendFile`, formData, {
+  formData.append("roomCode", roomCode);
+  formData.append("senderName", senderName);
+  formData.append("text", text);
+
+  return instance.post(`/messages/send`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

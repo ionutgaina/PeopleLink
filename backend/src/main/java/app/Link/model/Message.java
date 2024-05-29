@@ -29,7 +29,8 @@ public class Message {
     @Column(name = "text", nullable = false)
     private String text;
 
-    @Column(name = "media_url")
+    @Lob
+    @Column(name = "media_url", length = 2083)
     private String mediaUrl;
 
     @ManyToOne

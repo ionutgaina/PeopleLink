@@ -5,7 +5,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
 import { User } from "../../types";
 import "./style.css";
-import { sendFile, sendMessage } from "../../services/Messages";
+import { sendMessage } from "../../services/Messages";
 import Swal from "sweetalert2";
 
 export interface ChatFooterProps {
@@ -24,11 +24,7 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
     e.preventDefault();
     if (input || file) {
       try {
-        if (file) {
-          await sendFile(file);
-        }
-
-        await sendMessage(roomCode, loggedInUser.username, input);
+        await sendMessage(roomCode, loggedInUser.username, input, file);
       } catch (error: any) {
         console.error("Error sending message: ", error);
         if (error.response) {
@@ -39,11 +35,10 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
             showConfirmButton: false,
           });
         }
-      } finally {
-        setInput("");
-        setFile(null);
-        setFilePreview(null);
       }
+      setInput("");
+      setFile(null);
+      setFilePreview(null);
     }
   };
 
@@ -71,6 +66,10 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
   const removeFile = () => {
     setFile(null);
     setFilePreview(null);
+    const fileInput = document.getElementById("file-input") as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = "";
+    }
   };
 
   return (
