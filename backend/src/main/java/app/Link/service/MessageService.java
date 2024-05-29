@@ -13,7 +13,6 @@ import app.Link.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,7 +40,6 @@ public class MessageService {
         message.setUser(messageSender);
         message.setText(messageDto.getText());
         message.setMediaUrl(messageDto.getMediaUrl());
-//        message.setTimestamp(LocalDateTime.now());
 
         messageRepository.save(message);
     }
@@ -56,7 +54,12 @@ public class MessageService {
 
     List<MessageDto> listMessages(Contact contact) {
         return contact.getMessages().stream().map(
-                message -> new MessageDto(message.getText(), message.getUser().getUsername(), message.getTimestamp())
+                message -> new MessageDto(
+                        message.getText(),
+                        message.getUser().getUsername(),
+                        message.getMediaUrl(),
+                        message.getTimestamp()
+                )
         ).toList();
     }
 }

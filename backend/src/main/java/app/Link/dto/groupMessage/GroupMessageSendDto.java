@@ -9,4 +9,5 @@ public class GroupMessageSendDto {
     private String senderName;
     private String text;
     private String groupName;
+    private String mediaUrl;
 }

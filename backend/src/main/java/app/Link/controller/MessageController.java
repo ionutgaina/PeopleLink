@@ -44,16 +44,13 @@ public class MessageController {
                 fileUrl = s3Service.uploadFile(file);
             }
 
-            // Create the message DTO
-            MessageSendDto message = new MessageSendDto(text, senderName, roomCode, fileUrl);
-
-            // Determine the destination topic and send the message
             String destTopic = "/rooms/" + roomCode;
             if (roomCode.contains(senderName)) {
+                MessageSendDto message = new MessageSendDto(text, senderName, roomCode, fileUrl);
                 messageService.sendMessage(message);
                 messagingTemplate.convertAndSend(destTopic, senderName + " sent you a message");
             } else {
-                GroupMessageSendDto groupMessageDto = new GroupMessageSendDto(senderName, text, roomCode);
+                GroupMessageSendDto groupMessageDto = new GroupMessageSendDto(senderName, text, roomCode, fileUrl);
                 groupMessageService.sendMessage(groupMessageDto);
                 messagingTemplate.convertAndSend(destTopic, senderName + " sent a message in " + roomCode);
             }

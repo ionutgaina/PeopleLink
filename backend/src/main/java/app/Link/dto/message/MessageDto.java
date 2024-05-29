@@ -10,5 +10,6 @@ import java.time.LocalDateTime;
 public class MessageDto {
     private String text;
     private String senderName;
+    private String mediaUrl;
     private LocalDateTime timestamp;
 }

@@ -40,6 +40,7 @@ public class GroupMessageService {
         groupMessage.setText(messageDto.getText());
         groupMessage.setSender(sender);
         groupMessage.setGroup(group);
+        groupMessage.setMediaUrl(messageDto.getMediaUrl());
 
         groupMessageRepository.save(groupMessage);
     }
@@ -58,7 +59,12 @@ public class GroupMessageService {
             throw new Exception("User not in group");
 
         return group.getMessages().stream().map(
-                m -> new GroupMessageDto(m.getText(), m.getSender().getUsername(), m.getTimestamp())
+                m -> new GroupMessageDto(
+                        m.getText(),
+                        m.getSender().getUsername(),
+                        m.getMediaUrl(),
+                        m.getTimestamp()
+                )
         ).toList();
     }
 }
