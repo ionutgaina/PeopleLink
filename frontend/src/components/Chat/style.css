@@ -57,3 +57,10 @@
 	margin-right: 3.75rem;
 	width: calc(100% - 3.75rem);
 }
+
+.chat__image {
+	max-width: 100%;
+	max-height: 200px; /* Adjust as needed */
+	border-radius: 8px;
+	margin-top: 5px;
+  }

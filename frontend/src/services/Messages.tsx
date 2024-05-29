@@ -11,6 +11,7 @@ export const getMessages = async (roomCode: string, userName: string) => {
     content: message.text,
     user: message.senderName,
     createdAt: message.timestamp,
+    mediaUrl: message?.mediaUrl,
   }));
 };
 

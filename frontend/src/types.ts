@@ -2,6 +2,7 @@ export interface MessagePopulated {
 	content: string;
 	user: User;
 	createdAt: string;
+	mediaUrl?: string;
 }
 export interface User {
 	username: string;

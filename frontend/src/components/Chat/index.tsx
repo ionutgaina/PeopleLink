@@ -36,16 +36,20 @@ const Chat = ({ roomCode }: ChatProps) => {
     };
 
     if (socket) {
-      socket.subscribe(`/rooms/${roomCode}`, async (message) => {
-        console.log("Message received: ", message);
-        try {
-          const messages = await getMessages(roomCode, userDetails.username);
-          console.log("Messages: ", messages);
-          setMessages(messages);
-        } catch (error) {
-          // console.log("Error: ", error);
-        }
-      }, { id : "chat"});
+      socket.subscribe(
+        `/rooms/${roomCode}`,
+        async (message) => {
+          console.log("Message received: ", message);
+          try {
+            const messages = await getMessages(roomCode, userDetails.username);
+            console.log("Messages: ", messages);
+            setMessages(messages);
+          } catch (error) {
+            // console.log("Error: ", error);
+          }
+        },
+        { id: "chat" }
+      );
     }
 
     fetchData();
@@ -78,7 +82,7 @@ const Chat = ({ roomCode }: ChatProps) => {
       >
         <Scrollbars className="chat__scrollbar">
           <div className="chat__main">
-            {messages.map(({ content, user, createdAt }: any, i) => {
+            {messages.map(({ content, user, createdAt, mediaUrl }: any, i) => {
               const lastMessage = messages.length - 1 === i;
               return (
                 <div
@@ -89,15 +93,25 @@ const Chat = ({ roomCode }: ChatProps) => {
                 >
                   <div className="message__block">
                     <Avatar>{user.charAt(0)}</Avatar>
-                    <p
+                    <div
                       ref={lastMessage ? setRef : null}
                       className="chat__message"
                     >
                       <span className="header__text chat__person">
                         {userDetails.username === user ? "You" : user}
                       </span>
+                      {/* Conditionally render the image if mediaUrl is present */}
+                      {mediaUrl && (
+                        <a href={mediaUrl} target="_blank" rel="noopener noreferrer">
+                          <img
+                            src={mediaUrl}
+                            alt="media"
+                            className="chat__image chat__person"
+                          />
+                        </a>
+                      )}
                       {content}
-                    </p>
+                    </div>
                   </div>
                   <span className="chat__timestamp">
                     {formatDate(parseISO(createdAt))}
