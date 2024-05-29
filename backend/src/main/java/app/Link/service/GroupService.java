@@ -87,6 +87,7 @@ public class GroupService {
         groupMemberRepository.save(groupMember);
     }
 
+
     public List<String> removeGroup(GroupRemoveDto groupRemoveDto) throws Exception {
         System.out.println(groupRemoveDto.getGroupName());
         Group group = groupRepository.findByName(groupRemoveDto.getGroupName()).orElseThrow(

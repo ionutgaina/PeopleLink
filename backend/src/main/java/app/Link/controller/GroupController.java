@@ -84,10 +84,15 @@ public class GroupController {
     public ResponseEntity<?> inviteToGroup(@RequestBody GroupInviteDto groupInviteDto) {
         try {
             groupService.inviteUser(groupInviteDto);
-            messagingTemplate.convertAndSendToUser(
-                    groupInviteDto.getUserName(),
-                    "queue/rooms",
-                    groupInviteDto.getAdminName() + " invited you to group " + groupInviteDto.getGroupName()
+
+            groupService.getGroup(groupInviteDto.getGroupName()).getMembers().forEach(
+                    member -> {
+                        messagingTemplate.convertAndSendToUser(
+                                member,
+                                "queue/rooms",
+                                "User " + groupInviteDto.getUserName() + " has been invited to the group"
+                        );
+                    }
             );
             return ResponseEntity.ok().body("User added!");
         } catch (Exception e) {
@@ -123,6 +128,39 @@ public class GroupController {
                     "You have left the group " + groupLeaveDto.getGroupName()
             );
             return ResponseEntity.ok().body("Left group!");
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/kick")
+    public ResponseEntity<?> kickUser(@RequestBody GroupRemoveUserDto groupRemoveUserDto) {
+        try {
+            messagingTemplate.convertAndSendToUser(
+                    groupRemoveUserDto.getRemoveUserName(),
+                    "queue/rooms",
+                    "You have been kicked from the group " + groupRemoveUserDto.getGroupName()
+            );
+            groupService.removeMember(groupRemoveUserDto);
+
+            List<String> toNotify = groupService.getGroup(groupRemoveUserDto.getGroupName()).getMembers();
+            for (String username : toNotify) {
+                if (username.equals(groupRemoveUserDto.getUserName())) {
+                    messagingTemplate.convertAndSendToUser(
+                            username,
+                            "queue/rooms",
+                            "You have been kicked from the group " + groupRemoveUserDto.getGroupName()
+                    );
+
+                } else {
+                    messagingTemplate.convertAndSendToUser(
+                            username,
+                            "queue/rooms",
+                            "User " + groupRemoveUserDto.getUserName() + " has been kicked from the group"
+                    );
+                }
+            }
+            return ResponseEntity.ok().body("User kicked!");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
