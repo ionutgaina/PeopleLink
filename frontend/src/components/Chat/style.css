@@ -4,6 +4,11 @@
 .chat__body {
 	background-color: #f1faee;
 	height: calc(100vh - 7.3rem);
+	/* transparecy to image */
+	background-image: linear-gradient(rgba(249, 249, 249, 0.906), rgba(255, 255, 255, 0.901)), url('/public/bg.png');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
 }
 .chat__main {
 	padding: 0 1rem 1.75rem;
