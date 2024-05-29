@@ -57,3 +57,11 @@ export const inviteUser = async (adminName: string, groupName: string, userName:
     userName,
   });
 }
+
+export const kickUser = async (userName: string, groupName: string, removeUserName: string) => {
+  return instance.post(`/groups/kick`, {
+    userName,
+    groupName,
+    removeUserName,
+  });
+}

@@ -31,8 +31,12 @@ const Chat = ({ roomCode }: ChatProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const messages = await getMessages(roomCode, userDetails.username);
-      setMessages(messages);
+      try {
+        const messages = await getMessages(roomCode, userDetails.username);
+        setMessages(messages);
+      } catch (error) {
+        // console.log("Error: ", error);
+      }
     };
 
     if (socket) {
@@ -102,7 +106,11 @@ const Chat = ({ roomCode }: ChatProps) => {
                       </span>
                       {/* Conditionally render the image if mediaUrl is present */}
                       {mediaUrl && (
-                        <a href={mediaUrl} target="_blank" rel="noopener noreferrer">
+                        <a
+                          href={mediaUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <img
                             src={mediaUrl}
                             alt="media"

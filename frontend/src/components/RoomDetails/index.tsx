@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import ConfirmationDialog from "../ConfirmationDialog";
 import InviteUserModal from "./InviteUserModal";
+import KickUserModal from "./KickUserModal";
 import { useUser } from "../../context/UserContext";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -18,7 +19,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import { RoomPopulated } from "../../types";
 import { AxiosResponse } from "axios";
 import Swal from "sweetalert2";
-import { deleteRoom, inviteUser, leaveRoom } from "../../services/Group";
+import { deleteRoom, inviteUser, kickUser, leaveRoom } from "../../services/Group";
 import { useSocket } from "../../context/SocketContext";
 
 export interface RoomDetailsProps {
@@ -29,6 +30,7 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
   const { code, description, users } = roomDetails;
   const [isOpen, setIsOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isKickModalOpen, setIsKickModalOpen] = useState(false);
   const [content, setContent] = useState("");
   const [type, setType] = useState("Leave");
   const { userDetails } = useUser();
@@ -45,12 +47,16 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
     } else if (type === "Delete") {
       setContent(
         "This action is irreversible. All messages and media shared in this room will be deleted."
-      );
+      )
     }
   };
 
   const openInviteModal = () => {
     setIsInviteModalOpen(true);
+  };
+
+  const openKickModal = () => {
+    setIsKickModalOpen(true);
   };
 
   const handleModalClose = async (willProceed: boolean) => {
@@ -72,6 +78,7 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
         } else {
           throw new Error("Invalid action");
         }
+
         Swal.fire({
           title: response.data,
           icon: "success",
@@ -113,6 +120,29 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
     }
   };
 
+  const handleKickModalClose = async (username?: string) => {
+    setIsKickModalOpen(false);
+    if (username) {
+      try {
+        const response = await kickUser(userDetails.username, code, username);
+        Swal.fire({
+          title: response.data,
+          icon: "success",
+          showConfirmButton: true,
+        });
+      } catch (e: any) {
+        if (e.response) {
+          Swal.fire({
+            title: e.response.data,
+            icon: "error",
+            timer: 2500,
+            showConfirmButton: false,
+          });
+        }
+      }
+    }
+  };
+
   const generateOptions = () => {
     const ROOM_OPTIONS = [
       {
@@ -133,6 +163,12 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
         adminOnly: true,
         action: () => openInviteModal(),
       },
+      {
+        label: "Kick User",
+        icon: <PersonIcon />,
+        adminOnly: true,
+        action: () => openKickModal(),
+      }
     ];
     return ROOM_OPTIONS.map(({ label, icon, adminOnly, action }, i) => {
       return (
@@ -178,6 +214,10 @@ function RoomDetails({ roomDetails }: RoomDetailsProps) {
       <InviteUserModal
         open={isInviteModalOpen}
         onClose={handleInviteModalClose}
+      />
+      <KickUserModal
+        open={isKickModalOpen}
+        onClose={handleKickModalClose}
       />
     </div>
   );
