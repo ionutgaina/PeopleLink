@@ -40,6 +40,9 @@ public class MessageService {
         message.setContact(contact);
         message.setUser(messageSender);
         message.setText(messageDto.getText());
+        message.setMediaUrl(messageDto.getMediaUrl());
+//        message.setTimestamp(LocalDateTime.now());
+
         messageRepository.save(message);
     }
 

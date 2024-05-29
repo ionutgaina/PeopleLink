@@ -24,7 +24,7 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
     e.preventDefault();
     if (input || file) {
       try {
-        await sendMessage(roomCode, loggedInUser.username, input);
+        await sendMessage(roomCode, loggedInUser.username, input, file);
       } catch (error: any) {
         console.error("Error sending message: ", error);
         if (error.response) {
@@ -35,11 +35,9 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
             showConfirmButton: false,
           });
         }
-      } finally {
-        setInput("");
-        setFile(null);
-        setFilePreview(null);
       }
+      setInput("");
+      removeFile();
     }
   };
 
@@ -67,13 +65,21 @@ function ChatFooter({ roomCode, loggedInUser }: ChatFooterProps) {
   const removeFile = () => {
     setFile(null);
     setFilePreview(null);
+    const fileInput = document.getElementById("file-input") as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = "";
+    }
   };
 
   return (
     <div className="chat__footer">
       {filePreview && (
         <div className="file-preview">
-          <img src={filePreview} alt="Selected file" className="preview-image" />
+          <img
+            src={filePreview}
+            alt="Selected file"
+            className="preview-image"
+          />
           <IconButton className="close-button" onClick={removeFile}>
             <CloseIcon />
           </IconButton>

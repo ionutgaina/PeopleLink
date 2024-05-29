@@ -29,6 +29,10 @@ public class Message {
     @Column(name = "text", nullable = false)
     private String text;
 
+    @Lob
+    @Column(name = "media_url", length = 2083)
+    private String mediaUrl;
+
     @ManyToOne
     @JoinColumn(name = "contact_id", nullable = false)
     private Contact contact;
